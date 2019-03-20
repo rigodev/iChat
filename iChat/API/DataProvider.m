@@ -8,7 +8,7 @@
 
 #import "DataProvider.h"
 @import Firebase;
-
+//868C8C 
 static NSString *const kUserID = @"uid";
 
 @implementation DataProvider
@@ -36,10 +36,10 @@ static NSString *const kUserID = @"uid";
     return self;
 }
 
-- (void)registrUserName:(NSString *)name
-                  email:(NSString *)email
-               password:(NSString *)password
-                handler:(void (^)(NSError *error))handler
+- (void)signupUserWithName:(NSString *)name
+                     email:(NSString *)email
+                  password:(NSString *)password
+                   handler:(void (^)(NSError *error))handler
 {
     if(_databaseRef == nil)
     {
@@ -54,12 +54,6 @@ static NSString *const kUserID = @"uid";
     if([email isEqualToString:@""] || [password isEqualToString:@""])
     {
         NSLog(@"%@ :: email and password can't be empty", NSStringFromSelector(_cmd));
-        return;
-    }
-    
-    if(_databaseRef == nil)
-    {
-        NSLog(@"%@ :: FIRDatabaseReference is nil", NSStringFromSelector(_cmd));
         return;
     }
     
@@ -127,6 +121,36 @@ static NSString *const kUserID = @"uid";
         _curUserRef = [[_databaseRef child:@"users"] child:userID];
         handler(true, nil);
     }
+}
+
+- (void)signinUserWithEmail:(NSString *)email
+                   password:(NSString *)password
+                    handler:(void (^)(NSError *error))handler
+{
+    if(_databaseRef == nil)
+    {
+        NSLog(@"%@ :: FIRDatabaseReference is nil", NSStringFromSelector(_cmd));
+        handler(nil);
+        return;
+    }
+    
+    email = [email stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+    password = [password stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+    
+    [[FIRAuth auth] signInWithEmail:email password:password completion:^(FIRAuthDataResult * _Nullable authResult, NSError * _Nullable error)
+     {
+         if(error)
+         {
+             NSLog(@"%@ :: FIRAuth signInWithEmail error = %@", NSStringFromSelector(_cmd), error.userInfo[@"NSLocalizedDescription"]);
+             handler(error);
+             return;
+         }
+         
+         NSString *userID = authResult.user.uid;
+         [[NSUserDefaults standardUserDefaults] setValue:userID forKey:kUserID];
+         self->_curUserRef = [[self->_databaseRef child:@"users"] child:userID];
+         handler(nil);        
+     }];
 }
 
 - (void)signOutHandler:(void(^)(NSError *error))handler

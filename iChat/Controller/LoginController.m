@@ -8,6 +8,7 @@
 
 #import "LoginController.h"
 #import "DataProvider.h"
+#import "UIViewController+showAlert.h"
 
 static NSString *const kSegueChannelsID = @"segChannelsID";
 
@@ -15,7 +16,6 @@ static NSString *const kSegueChannelsID = @"segChannelsID";
 
 @property (weak, nonatomic) IBOutlet UIView *signInView;
 @property (weak, nonatomic) IBOutlet UIButton *regBtn;
-@property (weak, nonatomic) IBOutlet UITextField *nameField;
 @property (weak, nonatomic) IBOutlet UITextField *emailField;
 @property (weak, nonatomic) IBOutlet UITextField *passwordField;
 
@@ -26,6 +26,15 @@ static NSString *const kSegueChannelsID = @"segChannelsID";
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    [self setupControls];
+}
+
+- (void)setupControls
+{
+    self.emailField.attributedPlaceholder = [[NSAttributedString alloc] initWithString:self.emailField.placeholder attributes:@{NSForegroundColorAttributeName: [UIColor colorWithRed:134 green:140 blue:140 alpha:1]}];
+    
+    self.passwordField.attributedPlaceholder = [[NSAttributedString alloc] initWithString:self.passwordField.placeholder attributes:@{NSForegroundColorAttributeName: [UIColor colorWithRed:134 green:140 blue:140 alpha:1]}];
     
     self.signInView.layer.cornerRadius = 5;
     self.signInView.layer.masksToBounds = true;
@@ -40,44 +49,28 @@ static NSString *const kSegueChannelsID = @"segChannelsID";
 
 - (IBAction)loginTapHandle:(id)sender
 {
-    NSString *name = [self.nameField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
     NSString *email = [self.emailField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
     NSString *password = [self.passwordField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
     
-    if(![name isEqualToString:@""] && ![email isEqualToString:@""] && ![password isEqualToString:@""])
+    if(![email isEqualToString:@""] && ![password isEqualToString:@""])
     {
-        [[DataProvider sharedInstance] registrUserName:name
-                                                 email:email
-                                              password:password
-                                               handler:^(NSError * _Nonnull error)
+        [[DataProvider sharedInstance] signinUserWithEmail:email password:password handler:^(NSError * _Nonnull error)
          {
              if(error)
              {
-                 [self showAlertWithTitle:@"Регистрация неуспешна" message:error.userInfo[@"NSLocalizedDescription"]];
+                 [self showAlertWithTitle:@"Вход не выполнен!" message:error.userInfo[@"NSLocalizedDescription"]];
                  return;
              }
              
              [self performSegueWithIdentifier:kSegueChannelsID sender:nil];
-         }];        
+             return;
+         }];
     }
     else
     {
         [self showAlertWithTitle:@"Внимание:" message:@"Вам необходимо заполнить все поля."];
         return;
     }
-}
-
-- (void) showAlertWithTitle:(NSString *)title message:(NSString *)msg
-{
-    UIAlertController* alert = [UIAlertController alertControllerWithTitle:title
-                                                                   message:msg
-                                                            preferredStyle:UIAlertControllerStyleAlert];
-    
-    UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"ОК" style:UIAlertActionStyleDefault
-                                                          handler:^(UIAlertAction * action) {}];
-    
-    [alert addAction:defaultAction];
-    [self presentViewController:alert animated:YES completion:nil];
 }
 
 @end

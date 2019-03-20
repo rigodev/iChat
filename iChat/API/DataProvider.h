@@ -14,10 +14,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (instancetype)sharedInstance;
 
-- (void)registrUserName:(NSString *)name
-                  email:(NSString *)email
-               password:(NSString *)password
-                handler:(void (^)(NSError *error))handler;
+- (void)signupUserWithName:(NSString *)name
+                     email:(NSString *)email
+                  password:(NSString *)password
+                   handler:(void (^)(NSError *error))handler;
+
+- (void)signinUserWithEmail:(NSString *)email
+                   password:(NSString *)password
+                    handler:(void (^)(NSError *error))handler;
 
 - (void)currentUserAuthorizedHandler:(void(^)(BOOL authorized, NSError *error))handler;
 - (void)signOutHandler:(void(^)(NSError *error))handler;
