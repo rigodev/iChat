@@ -1,5 +1,5 @@
 //
-//  ViewController.h
+//  LoginController.h
 //  iChat
 //
 //  Created by rigo on 19/03/2019.
@@ -8,8 +8,10 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ViewController : UIViewController
+NS_ASSUME_NONNULL_BEGIN
 
+@interface LoginController : UIViewController
 
 @end
 
+NS_ASSUME_NONNULL_END

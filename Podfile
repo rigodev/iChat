@@ -1,5 +1,5 @@
 # Uncomment the next line to define a global platform for your project
-# platform :ios, '9.0'
+ platform :ios, '9.3'
 
 target 'iChat' do
   # Uncomment the next line if you're using Swift or would like to use dynamic frameworks
@@ -9,4 +9,5 @@ target 'iChat' do
   pod 'Firebase'
   pod 'Firebase/Database'
   pod 'FirebaseUI/Auth'
+  pod 'FirebaseUI/Storage'
 end
