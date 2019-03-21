@@ -8,6 +8,7 @@
 
 #import "ChannelsController.h"
 #import "DataProvider.h"
+#import "User.h"
 
 static NSString *const kLoginControllerID = @"LoginControllerID";
 
@@ -25,8 +26,22 @@ static NSString *const kLoginControllerID = @"LoginControllerID";
     
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+    
+    [[DataProvider sharedInstance] getCurrentUserWithHandler:^(User * _Nonnull user)
+     {
+         if(user)
+         {
+             self.navigationItem.title = user.name;
+         }
+     }];
 }
 
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    self.navigationController.navigationBarHidden = NO;
+}
 
 #pragma mark - Table view data source
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="RHp-ce-4Pe">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="dzP-KN-y00">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -122,7 +122,7 @@
                                 </connections>
                             </button>
                         </subviews>
-                        <color key="backgroundColor" red="0.23021137714385986" green="0.29284808039665222" blue="0.40955129265785217" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" red="0.23137254901960785" green="0.29411764705882354" blue="0.40784313725490196" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="9vM-dM-azf" firstAttribute="leading" secondItem="Qyv-9b-hg1" secondAttribute="leading" constant="25" id="2E4-lR-kqQ"/>
                             <constraint firstItem="tGK-zN-AdU" firstAttribute="top" secondItem="oRn-TL-eFu" secondAttribute="bottom" constant="33.5" id="C2r-rn-fxL"/>
@@ -209,33 +209,33 @@
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="новая учетная запись" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7wF-2i-Ie3">
-                                <rect key="frame" x="16" y="239" width="343" height="16"/>
+                                <rect key="frame" x="16" y="232.5" width="343" height="16"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="13"/>
-                                <color key="textColor" red="0.23137254900000001" green="0.29411764709999999" blue="0.40784313729999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="clouds-blue" translatesAutoresizingMaskIntoConstraints="NO" id="n70-At-wn3">
-                                <rect key="frame" x="112.5" y="81" width="150" height="150"/>
+                                <rect key="frame" x="112.5" y="74.5" width="150" height="150"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="150" id="0ZQ-b6-ViP"/>
                                     <constraint firstAttribute="height" constant="150" id="muL-gC-ECq"/>
                                 </constraints>
                             </imageView>
                             <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QGf-R9-CHt">
-                                <rect key="frame" x="239" y="479" width="120" height="24"/>
+                                <rect key="frame" x="279" y="479" width="80" height="24"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="120" id="ZMo-Tt-n3X"/>
+                                    <constraint firstAttribute="width" constant="80" id="ZMo-Tt-n3X"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="14"/>
-                                <state key="normal" title="   назад" image="back">
-                                    <color key="titleColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <state key="normal" title="  назад" image="back">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 </state>
                                 <connections>
                                     <action selector="cancelHandle:" destination="dMe-K6-X6u" eventType="touchUpInside" id="lnJ-1q-Tgk"/>
                                 </connections>
                             </button>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="backgroundColor" red="0.1960784314" green="0.73333333329999995" blue="0.72941176470000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="heW-Qk-Upa" firstAttribute="leading" secondItem="2pg-yr-hA8" secondAttribute="leading" constant="16" id="2AY-og-vMB"/>
                             <constraint firstItem="2pg-yr-hA8" firstAttribute="trailing" secondItem="arh-Nf-BvS" secondAttribute="trailing" constant="16" id="5fI-Sm-nNx"/>
@@ -243,7 +243,7 @@
                             <constraint firstItem="7wF-2i-Ie3" firstAttribute="top" secondItem="n70-At-wn3" secondAttribute="bottom" constant="8" id="Jes-Es-RR0"/>
                             <constraint firstItem="arh-Nf-BvS" firstAttribute="leading" secondItem="2pg-yr-hA8" secondAttribute="leading" constant="16" id="Kfw-E1-rAV"/>
                             <constraint firstItem="heW-Qk-Upa" firstAttribute="top" secondItem="arh-Nf-BvS" secondAttribute="bottom" constant="20.5" id="LuA-KQ-atE"/>
-                            <constraint firstItem="arh-Nf-BvS" firstAttribute="top" secondItem="7wF-2i-Ie3" secondAttribute="bottom" constant="3.5" id="Nj6-BU-J0g"/>
+                            <constraint firstItem="arh-Nf-BvS" firstAttribute="top" secondItem="7wF-2i-Ie3" secondAttribute="bottom" constant="10" id="Nj6-BU-J0g"/>
                             <constraint firstItem="2pg-yr-hA8" firstAttribute="trailing" secondItem="7wF-2i-Ie3" secondAttribute="trailing" constant="16" id="PLQ-6d-TXr"/>
                             <constraint firstItem="arh-Nf-BvS" firstAttribute="centerY" secondItem="RiJ-6D-xhi" secondAttribute="centerY" id="Y5f-th-ZvV"/>
                             <constraint firstItem="7wF-2i-Ie3" firstAttribute="leading" secondItem="2pg-yr-hA8" secondAttribute="leading" constant="16" id="fr3-dw-8T6"/>
@@ -269,7 +269,6 @@
         <!--Channels Contoller-->
         <scene sceneID="APt-jv-6PM">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="PuO-hh-OCw" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <tableViewController title="Channels Contoller" id="Gew-am-DS4" customClass="ChannelsController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="F05-VZ-Oom">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
@@ -290,16 +289,56 @@
                             <outlet property="delegate" destination="Gew-am-DS4" id="k5L-pZ-f9i"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Root View Controller" id="CmH-4E-vgH">
+                    <navigationItem key="navigationItem" id="CmH-4E-vgH">
                         <barButtonItem key="leftBarButtonItem" title="Logout" id="1Wi-fd-uos">
+                            <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <connections>
                                 <action selector="logoutTapHandle:" destination="Gew-am-DS4" id="PVC-Pl-PKv"/>
                             </connections>
                         </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" style="plain" systemItem="bookmarks" id="oaI-4K-APT">
+                            <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <connections>
+                                <segue destination="eKV-7U-cEh" kind="show" id="YQb-PH-RZY"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                 </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="PuO-hh-OCw" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1346" y="36"/>
+        </scene>
+        <!--Контакты-->
+        <scene sceneID="l00-Oh-Tmv">
+            <objects>
+                <viewController id="eKV-7U-cEh" customClass="ContactsController" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="EQk-n8-L7X">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="Web-ya-1bA">
+                                <rect key="frame" x="0.0" y="28" width="375" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Web-ya-1bA" id="W6N-QA-c33">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                    </tableView>
+                    <navigationItem key="navigationItem" title="Контакты" id="Jby-4c-BuH">
+                        <barButtonItem key="leftBarButtonItem" title="Item" image="left-arrow" id="78Q-KD-Gih">
+                            <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <connections>
+                                <action selector="backHandler:" destination="eKV-7U-cEh" id="n6W-gh-ILl"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="QUK-g5-6hg" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2328.8000000000002" y="-252.32383808095955"/>
         </scene>
         <!--Root Controller-->
         <scene sceneID="98D-hj-2Yf">
@@ -317,16 +356,20 @@
         <!--Navigation Controller-->
         <scene sceneID="nNe-sf-gg2">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="lkL-21-Vdq" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <navigationController id="RHp-ce-4Pe" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="9I6-CS-Lr6">
                         <rect key="frame" x="0.0" y="20" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <color key="barTintColor" red="0.23137254901960785" green="0.29411764705882354" blue="0.40784313725490196" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <textAttributes key="titleTextAttributes">
+                            <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        </textAttributes>
                     </navigationBar>
                     <connections>
                         <segue destination="Gew-am-DS4" kind="relationship" relationship="rootViewController" id="Xad-Vf-wgk"/>
                     </connections>
                 </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="lkL-21-Vdq" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="332" y="36"/>
         </scene>
@@ -336,9 +379,10 @@
         <image name="clouds" width="192" height="192"/>
         <image name="clouds-blue" width="192" height="192"/>
         <image name="email" width="24" height="24"/>
+        <image name="left-arrow" width="24" height="24"/>
         <image name="password" width="24" height="24"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="s9v-Qa-TI9"/>
+        <segue reference="ESC-pC-vQp"/>
     </inferredMetricsTieBreakers>
 </document>

@@ -32,9 +32,11 @@ static NSString *const kSegueChannelsID = @"segChannelsID";
 
 - (void)setupControls
 {
-    self.emailField.attributedPlaceholder = [[NSAttributedString alloc] initWithString:self.emailField.placeholder attributes:@{NSForegroundColorAttributeName: [UIColor colorWithRed:134 green:140 blue:140 alpha:1]}];
+    UIColor *placeHolderColor = [UIColor colorWithRed:134.0/255.0 green:140.0/255.0 blue:140.0/255.0 alpha:1];
     
-    self.passwordField.attributedPlaceholder = [[NSAttributedString alloc] initWithString:self.passwordField.placeholder attributes:@{NSForegroundColorAttributeName: [UIColor colorWithRed:134 green:140 blue:140 alpha:1]}];
+    self.emailField.attributedPlaceholder = [[NSAttributedString alloc] initWithString:self.emailField.placeholder attributes:@{NSForegroundColorAttributeName: placeHolderColor}];
+    
+    self.passwordField.attributedPlaceholder = [[NSAttributedString alloc] initWithString:self.passwordField.placeholder attributes:@{NSForegroundColorAttributeName: placeHolderColor}];
     
     self.signInView.layer.cornerRadius = 5;
     self.signInView.layer.masksToBounds = true;

@@ -10,6 +10,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class User;
+
 @interface DataProvider : NSObject
 
 + (instancetype)sharedInstance;
@@ -25,6 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)currentUserAuthorizedHandler:(void(^)(BOOL authorized, NSError *error))handler;
 - (void)signOutHandler:(void(^)(NSError *error))handler;
+- (void)getCurrentUserWithHandler:(void(^)(User *user))handler;
 
 @end
 

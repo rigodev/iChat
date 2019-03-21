@@ -18,6 +18,8 @@
 		0F4A1C122242A52500D3AE03 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0F4A1C112242A52500D3AE03 /* Assets.xcassets */; };
 		0F4A1C152242BF2B00D3AE03 /* RegistrationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0F4A1C142242BF2B00D3AE03 /* RegistrationController.m */; };
 		0F4A1C182242C84300D3AE03 /* UIViewController+showAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 0F4A1C172242C84300D3AE03 /* UIViewController+showAlert.m */; };
+		0F725F7222438EE1006CFF15 /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 0F725F7122438EE1006CFF15 /* User.m */; };
+		0F725F7622439D29006CFF15 /* ContactsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0F725F7522439D29006CFF15 /* ContactsController.m */; };
 		BF9BB86568994987C8720E80 /* libPods-iChat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E18F34211E33C1811C3A452 /* libPods-iChat.a */; };
 /* End PBXBuildFile section */
 
@@ -42,6 +44,11 @@
 		0F4A1C142242BF2B00D3AE03 /* RegistrationController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RegistrationController.m; sourceTree = "<group>"; };
 		0F4A1C162242C84300D3AE03 /* UIViewController+showAlert.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIViewController+showAlert.h"; sourceTree = "<group>"; };
 		0F4A1C172242C84300D3AE03 /* UIViewController+showAlert.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+showAlert.m"; sourceTree = "<group>"; };
+		0F725F7022438EE1006CFF15 /* User.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = User.h; sourceTree = "<group>"; };
+		0F725F7122438EE1006CFF15 /* User.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = User.m; sourceTree = "<group>"; };
+		0F725F73224391D5006CFF15 /* Constants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
+		0F725F7422439D29006CFF15 /* ContactsController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ContactsController.h; sourceTree = "<group>"; };
+		0F725F7522439D29006CFF15 /* ContactsController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ContactsController.m; sourceTree = "<group>"; };
 		41350EA2C43C176C0391A398 /* Pods-iChat.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iChat.debug.xcconfig"; path = "Target Support Files/Pods-iChat/Pods-iChat.debug.xcconfig"; sourceTree = "<group>"; };
 		5E18F34211E33C1811C3A452 /* libPods-iChat.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-iChat.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E06FD2CC1A09B6C252B5DC22 /* Pods-iChat.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iChat.release.xcconfig"; path = "Target Support Files/Pods-iChat/Pods-iChat.release.xcconfig"; sourceTree = "<group>"; };
@@ -97,14 +104,16 @@
 		0F4A1BEB2240EDAD00D3AE03 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				0F725F7422439D29006CFF15 /* ContactsController.h */,
+				0F725F7522439D29006CFF15 /* ContactsController.m */,
+				0F4A1BF52240F15A00D3AE03 /* ChannelsController.h */,
+				0F4A1BF62240F15A00D3AE03 /* ChannelsController.m */,
 				0F4A1C0422423CAD00D3AE03 /* RootController.h */,
 				0F4A1C0522423CAD00D3AE03 /* RootController.m */,
 				0F4A1BEF2240EDFB00D3AE03 /* LoginController.h */,
 				0F4A1BF02240EDFB00D3AE03 /* LoginController.m */,
 				0F4A1C132242BF2B00D3AE03 /* RegistrationController.h */,
 				0F4A1C142242BF2B00D3AE03 /* RegistrationController.m */,
-				0F4A1BF52240F15A00D3AE03 /* ChannelsController.h */,
-				0F4A1BF62240F15A00D3AE03 /* ChannelsController.m */,
 				0F4A1C162242C84300D3AE03 /* UIViewController+showAlert.h */,
 				0F4A1C172242C84300D3AE03 /* UIViewController+showAlert.m */,
 			);
@@ -116,6 +125,7 @@
 			children = (
 				0F4A1BFF224187F400D3AE03 /* DataProvider.h */,
 				0F4A1C00224187F400D3AE03 /* DataProvider.m */,
+				0F725F73224391D5006CFF15 /* Constants.h */,
 			);
 			path = API;
 			sourceTree = "<group>";
@@ -139,6 +149,8 @@
 		0F4A1C102242823400D3AE03 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				0F725F7022438EE1006CFF15 /* User.h */,
+				0F725F7122438EE1006CFF15 /* User.m */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -281,6 +293,8 @@
 			files = (
 				0F4A1C182242C84300D3AE03 /* UIViewController+showAlert.m in Sources */,
 				0F4A1BE52240E49C00D3AE03 /* main.m in Sources */,
+				0F725F7622439D29006CFF15 /* ContactsController.m in Sources */,
+				0F725F7222438EE1006CFF15 /* User.m in Sources */,
 				0F4A1BD72240E49B00D3AE03 /* AppDelegate.m in Sources */,
 				0F4A1BF12240EDFB00D3AE03 /* LoginController.m in Sources */,
 				0F4A1C0622423CAD00D3AE03 /* RootController.m in Sources */,

@@ -7,9 +7,9 @@
 //
 
 #import "DataProvider.h"
+#import "User.h"
+#import "Constants.h"
 @import Firebase;
-//868C8C 
-static NSString *const kUserID = @"uid";
 
 @implementation DataProvider
 {
@@ -123,6 +123,25 @@ static NSString *const kUserID = @"uid";
     }
 }
 
+- (void)getCurrentUserWithHandler:(void(^)(User *))handler
+{
+    if(_curUserRef == nil)
+    {
+        NSLog(@"%@ :: CurrentDatabaseReference is nil", NSStringFromSelector(_cmd));
+        handler(nil);
+        return;
+    }
+    
+    [_curUserRef observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot)
+    {
+        User *user = [User new];
+        user.name = snapshot.value[kUserName];
+        user.email = snapshot.value[kUserEmail];
+        
+        handler(user);
+    }];
+}
+
 - (void)signinUserWithEmail:(NSString *)email
                    password:(NSString *)password
                     handler:(void (^)(NSError *error))handler
@@ -149,7 +168,7 @@ static NSString *const kUserID = @"uid";
          NSString *userID = authResult.user.uid;
          [[NSUserDefaults standardUserDefaults] setValue:userID forKey:kUserID];
          self->_curUserRef = [[self->_databaseRef child:@"users"] child:userID];
-         handler(nil);        
+         handler(nil);
      }];
 }
 
