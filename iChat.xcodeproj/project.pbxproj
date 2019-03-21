@@ -84,6 +84,7 @@
 				0F4A1C102242823400D3AE03 /* Model */,
 				0F4A1C0F2242822100D3AE03 /* View */,
 				0F4A1BEB2240EDAD00D3AE03 /* Controller */,
+				0F4A1C0A2242803800D3AE03 /* Resources */,
 				0F4A1BD52240E49B00D3AE03 /* AppDelegate.h */,
 				0F4A1BD62240E49B00D3AE03 /* AppDelegate.m */,
 				0F4A1C022242339E00D3AE03 /* GoogleService-Info.plist */,
@@ -106,7 +107,6 @@
 				0F4A1BF62240F15A00D3AE03 /* ChannelsController.m */,
 				0F4A1C162242C84300D3AE03 /* UIViewController+showAlert.h */,
 				0F4A1C172242C84300D3AE03 /* UIViewController+showAlert.m */,
-				0F4A1C0A2242803800D3AE03 /* Resources */,
 			);
 			path = Controller;
 			sourceTree = "<group>";

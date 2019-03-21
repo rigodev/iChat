@@ -60,7 +60,7 @@ static NSString *const kSegueChannelsID = @"segChannelsID";
 
 - (IBAction)cancelHandle:(id)sender
 {
-    [self dismissViewControllerAnimated:YES completion:nil];
+   [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (IBAction)signUpHandle:(id)sender
@@ -89,7 +89,5 @@ static NSString *const kSegueChannelsID = @"segChannelsID";
         return;
     }
 }
-
-
 
 @end

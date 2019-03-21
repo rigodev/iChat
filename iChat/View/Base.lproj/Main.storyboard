@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="RHp-ce-4Pe">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -208,16 +208,6 @@
                                     <action selector="signUpHandle:" destination="dMe-K6-X6u" eventType="touchUpInside" id="CzE-B3-HTd"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QGf-R9-CHt">
-                                <rect key="frame" x="128" y="478" width="119" height="24"/>
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="14"/>
-                                <state key="normal" title="   Обратно" image="back">
-                                    <color key="titleColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                </state>
-                                <connections>
-                                    <action selector="cancelHandle:" destination="dMe-K6-X6u" eventType="touchUpInside" id="lnJ-1q-Tgk"/>
-                                </connections>
-                            </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="новая учетная запись" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7wF-2i-Ie3">
                                 <rect key="frame" x="16" y="239" width="343" height="16"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="13"/>
@@ -231,24 +221,36 @@
                                     <constraint firstAttribute="height" constant="150" id="muL-gC-ECq"/>
                                 </constraints>
                             </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QGf-R9-CHt">
+                                <rect key="frame" x="239" y="479" width="120" height="24"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="120" id="ZMo-Tt-n3X"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="14"/>
+                                <state key="normal" title="   назад" image="back">
+                                    <color key="titleColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                                <connections>
+                                    <action selector="cancelHandle:" destination="dMe-K6-X6u" eventType="touchUpInside" id="lnJ-1q-Tgk"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="2pg-yr-hA8" firstAttribute="trailing" secondItem="heW-Qk-Upa" secondAttribute="trailing" constant="16" id="5JY-o4-5Ml"/>
+                            <constraint firstItem="heW-Qk-Upa" firstAttribute="leading" secondItem="2pg-yr-hA8" secondAttribute="leading" constant="16" id="2AY-og-vMB"/>
                             <constraint firstItem="2pg-yr-hA8" firstAttribute="trailing" secondItem="arh-Nf-BvS" secondAttribute="trailing" constant="16" id="5fI-Sm-nNx"/>
-                            <constraint firstItem="QGf-R9-CHt" firstAttribute="leading" secondItem="2pg-yr-hA8" secondAttribute="leading" constant="128" id="8Tw-Ve-xLN"/>
-                            <constraint firstItem="heW-Qk-Upa" firstAttribute="top" secondItem="arh-Nf-BvS" secondAttribute="bottom" constant="20.5" id="9Re-EI-2Zg"/>
                             <constraint firstItem="arh-Nf-BvS" firstAttribute="centerX" secondItem="RiJ-6D-xhi" secondAttribute="centerX" id="C39-lx-fr5"/>
                             <constraint firstItem="7wF-2i-Ie3" firstAttribute="top" secondItem="n70-At-wn3" secondAttribute="bottom" constant="8" id="Jes-Es-RR0"/>
                             <constraint firstItem="arh-Nf-BvS" firstAttribute="leading" secondItem="2pg-yr-hA8" secondAttribute="leading" constant="16" id="Kfw-E1-rAV"/>
+                            <constraint firstItem="heW-Qk-Upa" firstAttribute="top" secondItem="arh-Nf-BvS" secondAttribute="bottom" constant="20.5" id="LuA-KQ-atE"/>
                             <constraint firstItem="arh-Nf-BvS" firstAttribute="top" secondItem="7wF-2i-Ie3" secondAttribute="bottom" constant="3.5" id="Nj6-BU-J0g"/>
                             <constraint firstItem="2pg-yr-hA8" firstAttribute="trailing" secondItem="7wF-2i-Ie3" secondAttribute="trailing" constant="16" id="PLQ-6d-TXr"/>
-                            <constraint firstItem="QGf-R9-CHt" firstAttribute="top" secondItem="heW-Qk-Upa" secondAttribute="bottom" constant="20" id="RFR-75-DyN"/>
                             <constraint firstItem="arh-Nf-BvS" firstAttribute="centerY" secondItem="RiJ-6D-xhi" secondAttribute="centerY" id="Y5f-th-ZvV"/>
-                            <constraint firstItem="heW-Qk-Upa" firstAttribute="leading" secondItem="2pg-yr-hA8" secondAttribute="leading" constant="16" id="czr-lO-fRi"/>
                             <constraint firstItem="7wF-2i-Ie3" firstAttribute="leading" secondItem="2pg-yr-hA8" secondAttribute="leading" constant="16" id="fr3-dw-8T6"/>
-                            <constraint firstItem="2pg-yr-hA8" firstAttribute="trailing" secondItem="QGf-R9-CHt" secondAttribute="trailing" constant="128" id="lEE-Af-Yoy"/>
+                            <constraint firstItem="2pg-yr-hA8" firstAttribute="trailing" secondItem="QGf-R9-CHt" secondAttribute="trailing" constant="16" id="lgB-KR-Dwa"/>
+                            <constraint firstItem="QGf-R9-CHt" firstAttribute="top" secondItem="heW-Qk-Upa" secondAttribute="bottom" constant="21" id="lse-lE-7Kv"/>
                             <constraint firstItem="n70-At-wn3" firstAttribute="centerX" secondItem="RiJ-6D-xhi" secondAttribute="centerX" id="m54-qp-D7x"/>
+                            <constraint firstItem="2pg-yr-hA8" firstAttribute="trailing" secondItem="heW-Qk-Upa" secondAttribute="trailing" constant="16" id="maU-BB-W8y"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="2pg-yr-hA8"/>
                     </view>
@@ -267,6 +269,7 @@
         <!--Channels Contoller-->
         <scene sceneID="APt-jv-6PM">
             <objects>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="PuO-hh-OCw" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <tableViewController title="Channels Contoller" id="Gew-am-DS4" customClass="ChannelsController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="F05-VZ-Oom">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
@@ -295,7 +298,6 @@
                         </barButtonItem>
                     </navigationItem>
                 </tableViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="PuO-hh-OCw" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1346" y="36"/>
         </scene>
@@ -315,6 +317,7 @@
         <!--Navigation Controller-->
         <scene sceneID="nNe-sf-gg2">
             <objects>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="lkL-21-Vdq" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <navigationController id="RHp-ce-4Pe" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="9I6-CS-Lr6">
                         <rect key="frame" x="0.0" y="20" width="375" height="44"/>
@@ -324,7 +327,6 @@
                         <segue destination="Gew-am-DS4" kind="relationship" relationship="rootViewController" id="Xad-Vf-wgk"/>
                     </connections>
                 </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="lkL-21-Vdq" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="332" y="36"/>
         </scene>
