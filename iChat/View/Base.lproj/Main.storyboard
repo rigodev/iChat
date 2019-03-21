@@ -152,7 +152,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="332" y="820.83958020989508"/>
+            <point key="canvasLocation" x="-927" y="821"/>
         </scene>
         <!--Registration Controller-->
         <scene sceneID="XCt-O0-PuT">
@@ -264,7 +264,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ALu-In-Ov2" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1285.5999999999999" y="820.83958020989508"/>
+            <point key="canvasLocation" x="-927" y="1509"/>
         </scene>
         <!--Channels Contoller-->
         <scene sceneID="APt-jv-6PM">
@@ -313,7 +313,7 @@
             <objects>
                 <viewController id="eKV-7U-cEh" customClass="ContactsController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="EQk-n8-L7X">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="603"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <prototypes>
@@ -327,6 +327,7 @@
                             </tableViewCell>
                         </prototypes>
                     </tableView>
+                    <extendedEdge key="edgesForExtendedLayout" bottom="YES"/>
                     <navigationItem key="navigationItem" title="Контакты" id="Jby-4c-BuH">
                         <barButtonItem key="leftBarButtonItem" title="Item" image="left-arrow" id="78Q-KD-Gih">
                             <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -351,7 +352,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="eGx-jL-BXh" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-900" y="371"/>
+            <point key="canvasLocation" x="-927" y="36"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="nNe-sf-gg2">
@@ -383,6 +384,6 @@
         <image name="password" width="24" height="24"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="ESC-pC-vQp"/>
+        <segue reference="zc0-x3-51F"/>
     </inferredMetricsTieBreakers>
 </document>

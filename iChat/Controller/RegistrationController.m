@@ -46,6 +46,11 @@ static NSString *const kSegueChannelsID = @"segChannelsID";
     self.createBtn.layer.masksToBounds = true;
 }
 
+- (UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
+
 - (IBAction)cancelHandle:(id)sender
 {
    [self dismissViewControllerAnimated:YES completion:nil];

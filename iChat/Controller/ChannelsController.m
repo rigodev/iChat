@@ -36,11 +36,9 @@ static NSString *const kLoginControllerID = @"LoginControllerID";
      }];
 }
 
-- (void)viewWillAppear:(BOOL)animated
+- (UIStatusBarStyle)preferredStatusBarStyle
 {
-    [super viewWillAppear:animated];
-    
-    self.navigationController.navigationBarHidden = NO;
+    return UIStatusBarStyleLightContent;
 }
 
 #pragma mark - Table view data source
