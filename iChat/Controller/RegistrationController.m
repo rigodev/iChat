@@ -10,7 +10,7 @@
 #import "UIViewController+showAlert.h"
 #import "DataProvider.h"
 
-static NSString *const kSegueChannelsID = @"segChannelsID";
+static NSString *const kSegueRegistrationChannelsID = @"Registration2Channels";
 
 @interface RegistrationController ()
 
@@ -46,6 +46,34 @@ static NSString *const kSegueChannelsID = @"segChannelsID";
     self.createBtn.layer.masksToBounds = true;
 }
 
+//example of compression: NSData *imgData4 = UIImageJPEGRepresentation(newImage, 0.0f);
+//- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<UIImagePickerControllerInfoKey, id> *)info
+//{
+//    UIImage *selectedImage;
+//
+//    if(info[UIImagePickerControllerEditedImage])
+//    {
+//        selectedImage = info[UIImagePickerControllerEditedImage];
+//    }
+//    else if(info[UIImagePickerControllerOriginalImage])
+//    {
+//        selectedImage = info[UIImagePickerControllerOriginalImage];
+//    }
+//
+//    if(selectedImage)
+//    {
+//        self.profileImageView.image = selectedImage;
+//    }
+//
+//    [picker dismissViewControllerAnimated:YES completion:nil];
+//}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    self.navigationController.navigationBarHidden = YES;
+}
+
 - (UIStatusBarStyle)preferredStatusBarStyle
 {
     return UIStatusBarStyleLightContent;
@@ -53,7 +81,7 @@ static NSString *const kSegueChannelsID = @"segChannelsID";
 
 - (IBAction)cancelHandle:(id)sender
 {
-   [self dismissViewControllerAnimated:YES completion:nil];
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 - (IBAction)signUpHandle:(id)sender
@@ -62,9 +90,12 @@ static NSString *const kSegueChannelsID = @"segChannelsID";
     NSString *email = [self.emailField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
     NSString *password = [self.passwordField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
     
+    DataProvider *dataProvider = [DataProvider sharedInstance];
+    
     if(![name isEqualToString:@""] && ![email isEqualToString:@""] && ![password isEqualToString:@""])
     {
-        [[DataProvider sharedInstance] signupUserWithName:name email:email password:password handler:^(NSError * _Nonnull error)
+        
+        [dataProvider signupUserWithName:name email:email password:password handler:^(NSError * _Nonnull error)
          {
              if(error)
              {
@@ -72,7 +103,7 @@ static NSString *const kSegueChannelsID = @"segChannelsID";
                  return;
              }
              
-             [self performSegueWithIdentifier:kSegueChannelsID sender:nil];
+             [self performSegueWithIdentifier:kSegueRegistrationChannelsID sender:nil];
              return;
          }];
     }

@@ -10,7 +10,7 @@
 #import "DataProvider.h"
 #import "UIViewController+showAlert.h"
 
-static NSString *const kSegueChannelsID = @"segChannelsID";
+static NSString *const kSegueLoginChannelsID = @"Login2Channels";
 
 @interface LoginController ()
 
@@ -30,6 +30,34 @@ static NSString *const kSegueChannelsID = @"segChannelsID";
     [self setupControls];
 }
 
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    self.navigationController.navigationBarHidden = YES;
+    
+    self.emailField.text = @"";
+    self.passwordField.text = @"";
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
+    [[DataProvider sharedInstance] currentUserAuthorizedHandler:^(BOOL authorized, NSError * _Nonnull error)
+     {
+         if(authorized)
+         {
+             [self performSegueWithIdentifier:kSegueLoginChannelsID sender:nil];
+             return;
+         }
+     }];
+}
+
+- (UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
+
 - (void)setupControls
 {
     UIColor *placeHolderColor = [UIColor colorWithRed:134.0/255.0 green:140.0/255.0 blue:140.0/255.0 alpha:1];
@@ -42,11 +70,6 @@ static NSString *const kSegueChannelsID = @"segChannelsID";
     self.signInView.layer.masksToBounds = true;
     self.regBtn.layer.cornerRadius = 3;
     self.regBtn.layer.masksToBounds = true;
-}
-
-- (UIStatusBarStyle)preferredStatusBarStyle
-{
-    return UIStatusBarStyleLightContent;
 }
 
 - (IBAction)loginTapHandle:(id)sender
@@ -64,7 +87,7 @@ static NSString *const kSegueChannelsID = @"segChannelsID";
                  return;
              }
              
-             [self performSegueWithIdentifier:kSegueChannelsID sender:nil];
+             [self performSegueWithIdentifier:kSegueLoginChannelsID sender:nil];
              return;
          }];
     }

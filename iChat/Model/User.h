@@ -14,6 +14,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, copy) NSString *name;
 @property (nonatomic, copy) NSString *email;
+@property (nonatomic, copy) NSString *uid;
+@property (nonatomic, copy, nullable) NSString *profileURL;
+
+- (id)initWithName:(NSString *)name email:(NSString *)email uid:(nullable NSString *)uid profileURL:(nullable NSString *)profileURL;
+- (NSDictionary *)dictionaryRepresentation;
 
 @end
 

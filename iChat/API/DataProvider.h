@@ -27,7 +27,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)currentUserAuthorizedHandler:(void(^)(BOOL authorized, NSError *error))handler;
 - (void)signOutHandler:(void(^)(NSError *error))handler;
-- (void)getCurrentUserWithHandler:(void(^)(User *user))handler;
+- (void)fetchCurrentUserWithHandler:(void(^)(User *user))handler;
+- (void)fetchUserContactsWithHandler:(void(^)(NSArray *users))handler;
+- (void)uploadImage:(NSData *)imageData complitionHandler:(void(^)(NSError *error, NSString *imageURLString))handler;
+- (void)removeUserContactsObservers;
+- (void)getProfileImageFromURL:(NSString *)imageURL complitionHandler:(void(^)(NSError *error, NSData *imageData))handler;
 
 @end
 

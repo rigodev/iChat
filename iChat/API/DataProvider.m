@@ -11,9 +11,12 @@
 #import "Constants.h"
 @import Firebase;
 
+static NSString *const kUserId = @"uid";
+
 @implementation DataProvider
 {
-    FIRDatabaseReference *_databaseRef, *_curUserRef;
+    FIRDatabaseReference *_databaseRef;
+    NSCache *_imageCache;
 }
 
 + (instancetype)sharedInstance
@@ -31,6 +34,7 @@
 - (id)init{
     if(self = [super init]){
         _databaseRef = [[FIRDatabase database] reference];
+        _imageCache = [NSCache new];
     }
     
     return self;
@@ -57,24 +61,36 @@
         return;
     }
     
-    [[FIRAuth auth] createUserWithEmail:email password:password completion:^(FIRAuthDataResult * _Nullable authResult, NSError * _Nullable error)
-     {
-         if(error)
+    @try
+    {
+        [[FIRAuth auth] createUserWithEmail:email password:password completion:^(FIRAuthDataResult * _Nullable authResult, NSError * _Nullable error)
          {
-             NSLog(@"%@ :: FIRAuth createUserWithEmail error = %@", NSStringFromSelector(_cmd), error.userInfo[@"NSLocalizedDescription"]);
-             handler(error);
-             return;
-         }
-         
-         NSString *userID = authResult.user.uid;
-         [[NSUserDefaults standardUserDefaults] setValue:userID forKey:kUserID];
-         self->_curUserRef = [[self->_databaseRef child:@"users"] child:userID];
-         
-         NSDictionary *user = @{@"name" : name,
-                                @"email" : email};
-         [self->_curUserRef setValue:user];
-         handler(nil);
-     }];
+             if(error)
+             {
+                 NSLog(@"%@ :: FIRAuth createUserWithEmail error = %@", NSStringFromSelector(_cmd), error.userInfo[@"NSLocalizedDescription"]);
+                 handler(error);
+                 return;
+             }
+             
+             User *newUser = [[User alloc] initWithName:name email:email uid:authResult.user.uid profileURL:nil];
+             [[[self->_databaseRef child:usersPath] child:newUser.uid] setValue:[newUser dictionaryRepresentation] withCompletionBlock:^(NSError * _Nullable error, FIRDatabaseReference * _Nonnull ref)
+              {
+                  if(error)
+                  {
+                      NSLog(@"%@ :: %@", NSStringFromSelector(_cmd), error.userInfo[@"NSLocalizedDescription"]);
+                      handler(error);
+                      return;
+                  }
+                  
+                  [[NSUserDefaults standardUserDefaults] setValue:newUser.uid forKey:kUserId];
+                  handler(nil);
+              }];
+         }];
+    }
+    @catch (NSException *exception)
+    {
+        NSLog(@"%@ :: %@", NSStringFromSelector(_cmd), exception.description);
+    }
 }
 
 - (void)currentUserAuthorizedHandler:(void(^)(BOOL authorized, NSError *error))handler
@@ -86,8 +102,8 @@
         return;
     }
     
-    NSString *userID = [[NSUserDefaults standardUserDefaults] valueForKey:kUserID];
-    if(userID == nil)
+    NSString *userId = [[NSUserDefaults standardUserDefaults] valueForKey:kUserId];
+    if(userId == nil)
     {
         handler(false, nil);
         return;
@@ -96,14 +112,14 @@
     FIRUser *user = [[FIRAuth auth] currentUser];
     if(user == nil)
     {
-        [[NSUserDefaults standardUserDefaults] setValue:@"" forKey:kUserID];
+        [[NSUserDefaults standardUserDefaults] setValue:@"" forKey:kUserId];
         handler(false, nil);
         return;
     }
     
-    if(![userID isEqualToString:user.uid])
+    if(![userId isEqualToString:user.uid])
     {
-        [[NSUserDefaults standardUserDefaults] setValue:@"" forKey:kUserID];
+        [[NSUserDefaults standardUserDefaults] setValue:@"" forKey:kUserId];
         NSLog(@"%@ :: different current users", NSStringFromSelector(_cmd));
         
         NSError *error;
@@ -118,28 +134,85 @@
     }
     else
     {
-        _curUserRef = [[_databaseRef child:@"users"] child:userID];
         handler(true, nil);
     }
 }
 
-- (void)getCurrentUserWithHandler:(void(^)(User *))handler
+- (void)fetchCurrentUserWithHandler:(void(^)(User *))handler
 {
-    if(_curUserRef == nil)
+    if(_databaseRef == nil)
     {
-        NSLog(@"%@ :: CurrentDatabaseReference is nil", NSStringFromSelector(_cmd));
+        NSLog(@"%@ :: FIRDatabaseReference is nil", NSStringFromSelector(_cmd));
         handler(nil);
         return;
     }
     
-    [_curUserRef observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot)
+    NSString *userId = [[NSUserDefaults standardUserDefaults] valueForKey:kUserId];
+    if(userId == nil)
     {
-        User *user = [User new];
-        user.name = snapshot.value[kUserName];
-        user.email = snapshot.value[kUserEmail];
-        
-        handler(user);
-    }];
+        handler(nil);
+        return;
+    }
+    
+    [[[_databaseRef child:usersPath] child: userId] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot)
+     {
+         if(snapshot.childrenCount == 0)
+         {
+             handler(nil);
+             return;
+         }
+         
+         User *user = [[User alloc] initWithName:snapshot.value[kUserName]
+                                           email:snapshot.value[kUserEmail]
+                                             uid:userId
+                                      profileURL:snapshot.value[kUserProfileImageURL]];
+         handler(user);
+         return;
+     }];
+}
+
+- (void)fetchUserContactsWithHandler:(void(^)(NSArray *users))handler
+{
+    if(_databaseRef == nil)
+    {
+        NSLog(@"%@ :: FIRDatabaseReference is nil", NSStringFromSelector(_cmd));
+        handler(nil);
+        return;
+    }
+    
+    NSString *userId = [[NSUserDefaults standardUserDefaults] valueForKey:kUserId];
+    if(userId == nil)
+    {
+        handler(nil);
+        return;
+    }
+    
+    [[_databaseRef child:usersPath] observeEventType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot)
+     {
+         NSMutableArray *usersArray = [NSMutableArray array];
+         
+         for(FIRDataSnapshot *snap in [[snapshot children] allObjects])
+         {
+             User *user = [[User alloc] initWithName:snap.value[kUserName]
+                                               email:snap.value[kUserEmail]
+                                                 uid:userId
+                                          profileURL:snap.value[kUserProfileImageURL]];
+             [usersArray addObject:user];
+         }
+         
+         handler(usersArray);
+     }];
+}
+
+- (void)removeUserContactsObservers
+{
+    if(_databaseRef == nil)
+    {
+        NSLog(@"%@ :: FIRDatabaseReference is nil", NSStringFromSelector(_cmd));
+        return;
+    }
+    
+    [[_databaseRef child:usersPath] removeAllObservers];
 }
 
 - (void)signinUserWithEmail:(NSString *)email
@@ -166,8 +239,7 @@
          }
          
          NSString *userID = authResult.user.uid;
-         [[NSUserDefaults standardUserDefaults] setValue:userID forKey:kUserID];
-         self->_curUserRef = [[self->_databaseRef child:@"users"] child:userID];
+         [[NSUserDefaults standardUserDefaults] setValue:userID forKey:kUserId];
          handler(nil);
      }];
 }
@@ -184,11 +256,113 @@
     }
     else
     {
-        _curUserRef = nil;
-        [[NSUserDefaults standardUserDefaults] setValue:@"" forKey:kUserID];
+        [[NSUserDefaults standardUserDefaults] setValue:@"" forKey:kUserId];
         handler(nil);
         return;
     }
+}
+
+- (void)uploadImage:(NSData *)imageData complitionHandler:(void(^)(NSError *error, NSString *imageURLString))handler
+{
+    NSString *nameUID = [NSUUID UUID].UUIDString;
+    
+    FIRStorageReference *storageRef = [[[FIRStorage storage].reference child:profileImagesPath] child:nameUID];
+    if (storageRef)
+    {
+        [storageRef putData:imageData metadata:nil completion:^(FIRStorageMetadata * _Nullable metadata, NSError * _Nullable error)
+         {
+             if(error)
+             {
+                 NSLog(@"%@ :: %@", NSStringFromSelector(_cmd), error.userInfo[@"NSLocalizedDescription"]);
+                 handler(error, nil);
+                 return;
+             }
+             
+             handler(nil, metadata.path);
+             return;
+         }];
+    }
+    else
+    {
+        NSLog(@"%@ :: %@", NSStringFromSelector(_cmd), @"FIRStorageReference is nil");
+        NSError *error = [NSError errorWithDomain:NSStringFromSelector(_cmd)
+                                             code:0
+                                         userInfo:@{NSLocalizedDescriptionKey : @"FIRStorageReference is nil"}];
+        handler(error, nil);
+        return;
+    }
+}
+
+- (void)getProfileImageFromURL:(NSString *)imageURL complitionHandler:(void(^)(NSError *error, NSData *imageData))handler
+{
+    if([imageURL isEqualToString:@""])
+    {
+        return;
+    }
+    
+    NSData *imageCacheData = [_imageCache objectForKey:imageURL];
+    if(imageCacheData)
+    {
+        handler(nil, imageCacheData);
+        return;
+    }
+    
+    FIRStorageReference *storageRef = [[[FIRStorage storage].reference child:profileImagesPath] child:imageURL];
+    
+    [storageRef downloadURLWithCompletion:^(NSURL * _Nullable URL, NSError * _Nullable error)
+     {
+         if(error)
+         {
+             NSLog(@"%@ :: %@", NSStringFromSelector(_cmd), error.userInfo[@"NSLocalizedDescription"]);
+             handler(error, nil);
+             return;
+         }
+         
+         [[[NSURLSession sharedSession] dataTaskWithURL:URL completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error)
+           {
+               if(error)
+               {
+                   NSLog(@"%@ :: %@", NSStringFromSelector(_cmd), error.userInfo[@"NSLocalizedDescription"]);
+                   handler(error, nil);
+                   return;
+               }
+               
+               [self->_imageCache setObject:data forKey:imageURL];
+               handler(nil, data);
+               return;
+           }] resume];
+     }];
+    
+    //    NSURL *documentsURLPath = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
+    //    NSURL *fileURLPath = [documentsURLPath URLByAppendingPathComponent:imageURL];
+    
+    
+    //    FIRStorageReference *storageRef = [[[FIRStorage storage].reference child:profileImagesPath] child:imageURL];
+    //    if (storageRef)
+    //    {
+    //        [storageRef writeToFile:fileURLPath completion:^(NSURL * _Nullable URL, NSError * _Nullable error)
+    //        {
+    //            if(error)
+    //            {
+    //                NSLog(@"%@ :: %@", NSStringFromSelector(_cmd), error.userInfo[@"NSLocalizedDescription"]);
+    //                handler(error, nil);
+    //                return;
+    //            }
+    //
+    //            NSData *imageData = [NSData dataWithContentsOfURL:fileURLPath];
+    //            handler(nil, imageData);
+    //            return;
+    //        }];
+    //    }
+    //    else
+    //    {
+    //        NSLog(@"%@ :: %@", NSStringFromSelector(_cmd), @"FIRStorageReference is nil");
+    //        NSError *error = [NSError errorWithDomain:NSStringFromSelector(_cmd)
+    //                                             code:0
+    //                                         userInfo:@{NSLocalizedDescriptionKey : @"FIRStorageReference is nil"}];
+    //        handler(error, nil);
+    //        return;
+    //    }
 }
 
 @end

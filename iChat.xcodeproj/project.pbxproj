@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0F3F05FC2244220B0040EA52 /* UserCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 0F3F05FB2244220B0040EA52 /* UserCell.m */; };
 		0F4A1BD72240E49B00D3AE03 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 0F4A1BD62240E49B00D3AE03 /* AppDelegate.m */; };
 		0F4A1BDD2240E49B00D3AE03 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0F4A1BDB2240E49B00D3AE03 /* Main.storyboard */; };
 		0F4A1BE52240E49C00D3AE03 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 0F4A1BE42240E49C00D3AE03 /* main.m */; };
@@ -14,7 +15,6 @@
 		0F4A1BF72240F15A00D3AE03 /* ChannelsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0F4A1BF62240F15A00D3AE03 /* ChannelsController.m */; };
 		0F4A1C01224187F400D3AE03 /* DataProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 0F4A1C00224187F400D3AE03 /* DataProvider.m */; };
 		0F4A1C032242339E00D3AE03 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0F4A1C022242339E00D3AE03 /* GoogleService-Info.plist */; };
-		0F4A1C0622423CAD00D3AE03 /* RootController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0F4A1C0522423CAD00D3AE03 /* RootController.m */; };
 		0F4A1C122242A52500D3AE03 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0F4A1C112242A52500D3AE03 /* Assets.xcassets */; };
 		0F4A1C152242BF2B00D3AE03 /* RegistrationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0F4A1C142242BF2B00D3AE03 /* RegistrationController.m */; };
 		0F4A1C182242C84300D3AE03 /* UIViewController+showAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 0F4A1C172242C84300D3AE03 /* UIViewController+showAlert.m */; };
@@ -24,6 +24,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0F3F05FA2244220B0040EA52 /* UserCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UserCell.h; sourceTree = "<group>"; };
+		0F3F05FB2244220B0040EA52 /* UserCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UserCell.m; sourceTree = "<group>"; };
 		0F4A1BD22240E49B00D3AE03 /* iChat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iChat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0F4A1BD52240E49B00D3AE03 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		0F4A1BD62240E49B00D3AE03 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -37,8 +39,6 @@
 		0F4A1BFF224187F400D3AE03 /* DataProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DataProvider.h; sourceTree = "<group>"; };
 		0F4A1C00224187F400D3AE03 /* DataProvider.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DataProvider.m; sourceTree = "<group>"; };
 		0F4A1C022242339E00D3AE03 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		0F4A1C0422423CAD00D3AE03 /* RootController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RootController.h; sourceTree = "<group>"; };
-		0F4A1C0522423CAD00D3AE03 /* RootController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RootController.m; sourceTree = "<group>"; };
 		0F4A1C112242A52500D3AE03 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0F4A1C132242BF2B00D3AE03 /* RegistrationController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RegistrationController.h; sourceTree = "<group>"; };
 		0F4A1C142242BF2B00D3AE03 /* RegistrationController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RegistrationController.m; sourceTree = "<group>"; };
@@ -108,8 +108,6 @@
 				0F725F7522439D29006CFF15 /* ContactsController.m */,
 				0F4A1BF52240F15A00D3AE03 /* ChannelsController.h */,
 				0F4A1BF62240F15A00D3AE03 /* ChannelsController.m */,
-				0F4A1C0422423CAD00D3AE03 /* RootController.h */,
-				0F4A1C0522423CAD00D3AE03 /* RootController.m */,
 				0F4A1BEF2240EDFB00D3AE03 /* LoginController.h */,
 				0F4A1BF02240EDFB00D3AE03 /* LoginController.m */,
 				0F4A1C132242BF2B00D3AE03 /* RegistrationController.h */,
@@ -142,6 +140,8 @@
 			isa = PBXGroup;
 			children = (
 				0F4A1BDB2240E49B00D3AE03 /* Main.storyboard */,
+				0F3F05FA2244220B0040EA52 /* UserCell.h */,
+				0F3F05FB2244220B0040EA52 /* UserCell.m */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -297,9 +297,9 @@
 				0F725F7222438EE1006CFF15 /* User.m in Sources */,
 				0F4A1BD72240E49B00D3AE03 /* AppDelegate.m in Sources */,
 				0F4A1BF12240EDFB00D3AE03 /* LoginController.m in Sources */,
-				0F4A1C0622423CAD00D3AE03 /* RootController.m in Sources */,
 				0F4A1BF72240F15A00D3AE03 /* ChannelsController.m in Sources */,
 				0F4A1C01224187F400D3AE03 /* DataProvider.m in Sources */,
+				0F3F05FC2244220B0040EA52 /* UserCell.m in Sources */,
 				0F4A1C152242BF2B00D3AE03 /* RegistrationController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

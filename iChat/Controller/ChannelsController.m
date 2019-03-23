@@ -10,24 +10,30 @@
 #import "DataProvider.h"
 #import "User.h"
 
-static NSString *const kLoginControllerID = @"LoginControllerID";
+static NSString *const kLoginControllerID = @"LoginController";
 
 @interface ChannelsController ()
+
 
 @end
 
 @implementation ChannelsController
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
-    
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
-    
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
-    
-    [[DataProvider sharedInstance] getCurrentUserWithHandler:^(User * _Nonnull user)
+
+    [self getUserName];
+}
+
+- (UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
+
+- (void)getUserName
+{
+    [[DataProvider sharedInstance] fetchCurrentUserWithHandler:^(User * _Nonnull user)
      {
          if(user)
          {
@@ -36,9 +42,10 @@ static NSString *const kLoginControllerID = @"LoginControllerID";
      }];
 }
 
-- (UIStatusBarStyle)preferredStatusBarStyle
+- (void)viewWillAppear:(BOOL)animated
 {
-    return UIStatusBarStyleLightContent;
+    [super viewWillAppear:animated];
+    self.navigationController.navigationBarHidden = NO;
 }
 
 #pragma mark - Table view data source
@@ -61,12 +68,10 @@ static NSString *const kLoginControllerID = @"LoginControllerID";
          {
              return;
          }
-    
-         UIViewController *loginVC = [self.storyboard instantiateViewControllerWithIdentifier:kLoginControllerID];
-         [self presentViewController:loginVC animated:YES completion:nil];
+
+         [self.navigationController popToRootViewControllerAnimated:YES];
      }];
 }
-
 
 /*
  - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -75,54 +80,6 @@ static NSString *const kLoginControllerID = @"LoginControllerID";
  // Configure the cell...
  
  return cell;
- }
- */
-
-/*
- // Override to support conditional editing of the table view.
- - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
- // Return NO if you do not want the specified item to be editable.
- return YES;
- }
- */
-
-/*
- // Override to support editing the table view.
- - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
- if (editingStyle == UITableViewCellEditingStyleDelete) {
- // Delete the row from the data source
- [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
- } else if (editingStyle == UITableViewCellEditingStyleInsert) {
- // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
- }
- }
- */
-
-/*
- // Override to support rearranging the table view.
- - (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath {
- }
- */
-
-/*
- // Override to support conditional rearranging of the table view.
- - (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
- // Return NO if you do not want the item to be re-orderable.
- return YES;
- }
- */
-
-/*
- #pragma mark - Navigation
- 
- // In a storyboard-based application, you will often want to do a little preparation before navigation
- - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
- if([segue.identifier isEqualToString:@"segLoginID"])
- {
- 
- }
- // Get the new view controller using [segue destinationViewController].
- // Pass the selected object to the new view controller.
  }
  */
 
