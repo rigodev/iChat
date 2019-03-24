@@ -20,6 +20,9 @@
 		0F4A1C182242C84300D3AE03 /* UIViewController+showAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 0F4A1C172242C84300D3AE03 /* UIViewController+showAlert.m */; };
 		0F725F7222438EE1006CFF15 /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 0F725F7122438EE1006CFF15 /* User.m */; };
 		0F725F7622439D29006CFF15 /* ContactsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0F725F7522439D29006CFF15 /* ContactsController.m */; };
+		0FA658942246A125009045D9 /* ChatController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0FA658932246A125009045D9 /* ChatController.m */; };
+		0FD718C4224760540097363A /* UINavigationController+leap.m in Sources */ = {isa = PBXBuildFile; fileRef = 0FD718C3224760540097363A /* UINavigationController+leap.m */; };
+		0FD718C72247D24F0097363A /* Message.m in Sources */ = {isa = PBXBuildFile; fileRef = 0FD718C62247D24F0097363A /* Message.m */; };
 		BF9BB86568994987C8720E80 /* libPods-iChat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E18F34211E33C1811C3A452 /* libPods-iChat.a */; };
 /* End PBXBuildFile section */
 
@@ -49,6 +52,12 @@
 		0F725F73224391D5006CFF15 /* Constants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
 		0F725F7422439D29006CFF15 /* ContactsController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ContactsController.h; sourceTree = "<group>"; };
 		0F725F7522439D29006CFF15 /* ContactsController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ContactsController.m; sourceTree = "<group>"; };
+		0FA658922246A125009045D9 /* ChatController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChatController.h; sourceTree = "<group>"; };
+		0FA658932246A125009045D9 /* ChatController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ChatController.m; sourceTree = "<group>"; };
+		0FD718C2224760540097363A /* UINavigationController+leap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UINavigationController+leap.h"; sourceTree = "<group>"; };
+		0FD718C3224760540097363A /* UINavigationController+leap.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UINavigationController+leap.m"; sourceTree = "<group>"; };
+		0FD718C52247D24F0097363A /* Message.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Message.h; sourceTree = "<group>"; };
+		0FD718C62247D24F0097363A /* Message.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Message.m; sourceTree = "<group>"; };
 		41350EA2C43C176C0391A398 /* Pods-iChat.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iChat.debug.xcconfig"; path = "Target Support Files/Pods-iChat/Pods-iChat.debug.xcconfig"; sourceTree = "<group>"; };
 		5E18F34211E33C1811C3A452 /* libPods-iChat.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-iChat.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E06FD2CC1A09B6C252B5DC22 /* Pods-iChat.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iChat.release.xcconfig"; path = "Target Support Files/Pods-iChat/Pods-iChat.release.xcconfig"; sourceTree = "<group>"; };
@@ -104,6 +113,8 @@
 		0F4A1BEB2240EDAD00D3AE03 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				0FA658922246A125009045D9 /* ChatController.h */,
+				0FA658932246A125009045D9 /* ChatController.m */,
 				0F725F7422439D29006CFF15 /* ContactsController.h */,
 				0F725F7522439D29006CFF15 /* ContactsController.m */,
 				0F4A1BF52240F15A00D3AE03 /* ChannelsController.h */,
@@ -112,6 +123,8 @@
 				0F4A1BF02240EDFB00D3AE03 /* LoginController.m */,
 				0F4A1C132242BF2B00D3AE03 /* RegistrationController.h */,
 				0F4A1C142242BF2B00D3AE03 /* RegistrationController.m */,
+				0FD718C2224760540097363A /* UINavigationController+leap.h */,
+				0FD718C3224760540097363A /* UINavigationController+leap.m */,
 				0F4A1C162242C84300D3AE03 /* UIViewController+showAlert.h */,
 				0F4A1C172242C84300D3AE03 /* UIViewController+showAlert.m */,
 			);
@@ -151,6 +164,8 @@
 			children = (
 				0F725F7022438EE1006CFF15 /* User.h */,
 				0F725F7122438EE1006CFF15 /* User.m */,
+				0FD718C52247D24F0097363A /* Message.h */,
+				0FD718C62247D24F0097363A /* Message.m */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -292,6 +307,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0F4A1C182242C84300D3AE03 /* UIViewController+showAlert.m in Sources */,
+				0FA658942246A125009045D9 /* ChatController.m in Sources */,
 				0F4A1BE52240E49C00D3AE03 /* main.m in Sources */,
 				0F725F7622439D29006CFF15 /* ContactsController.m in Sources */,
 				0F725F7222438EE1006CFF15 /* User.m in Sources */,
@@ -301,6 +317,8 @@
 				0F4A1C01224187F400D3AE03 /* DataProvider.m in Sources */,
 				0F3F05FC2244220B0040EA52 /* UserCell.m in Sources */,
 				0F4A1C152242BF2B00D3AE03 /* RegistrationController.m in Sources */,
+				0FD718C72247D24F0097363A /* Message.m in Sources */,
+				0FD718C4224760540097363A /* UINavigationController+leap.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

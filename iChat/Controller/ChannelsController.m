@@ -14,7 +14,6 @@ static NSString *const kLoginControllerID = @"LoginController";
 
 @interface ChannelsController ()
 
-
 @end
 
 @implementation ChannelsController
@@ -22,7 +21,7 @@ static NSString *const kLoginControllerID = @"LoginController";
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
+    
     [self getUserName];
 }
 
@@ -34,12 +33,12 @@ static NSString *const kLoginControllerID = @"LoginController";
 - (void)getUserName
 {
     [[DataProvider sharedInstance] fetchCurrentUserWithHandler:^(User * _Nonnull user)
-     {
-         if(user)
          {
-             self.navigationItem.title = user.name;
-         }
-     }];
+             if(user)
+             {
+                 self.navigationItem.title = user.name;
+             }
+         }];
 }
 
 - (void)viewWillAppear:(BOOL)animated

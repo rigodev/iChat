@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class User;
+@class User, Message;
 
 @interface DataProvider : NSObject
 
@@ -25,6 +25,13 @@ NS_ASSUME_NONNULL_BEGIN
                    password:(NSString *)password
                     handler:(void (^)(NSError *error))handler;
 
+//- (void)sendMessage:(NSString *)message
+//         fromUserId:(NSString *)fromUserId
+//          toUserlId:(NSString *)toUserlId
+//  complitionHandler:(void(^)(NSError *error))handler;
+
+- (void)sendMessage:(Message *)message withComplitionHandler:(void(^)(NSError *error))handler;
+
 - (void)currentUserAuthorizedHandler:(void(^)(BOOL authorized, NSError *error))handler;
 - (void)signOutHandler:(void(^)(NSError *error))handler;
 - (void)fetchCurrentUserWithHandler:(void(^)(User *user))handler;
@@ -32,6 +39,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)uploadImage:(NSData *)imageData complitionHandler:(void(^)(NSError *error, NSString *imageURLString))handler;
 - (void)removeUserContactsObservers;
 - (void)getProfileImageFromURL:(NSString *)imageURL complitionHandler:(void(^)(NSError *error, NSData *imageData))handler;
+- (nullable NSString *)getCurrentUserId;
 
 @end
 

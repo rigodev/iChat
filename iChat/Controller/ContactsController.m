@@ -10,23 +10,27 @@
 #import "DataProvider.h"
 #import "UserCell.h"
 #import "User.h"
+#import "ChatController.h"
 
 static NSString *const cellId = @"userCell";
+static NSString *const chatControllerId = @"ChatController";
 
 @interface ContactsController ()
 {
-    NSMutableArray *_userContacts;
+    NSArray *_userContacts;
 }
 
 @end
 
 @implementation ContactsController
+{
+    User *_selectedUser;
+}
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
 }
-
 
 - (UIStatusBarStyle)preferredStatusBarStyle
 {
@@ -49,11 +53,9 @@ static NSString *const cellId = @"userCell";
 {
     [[DataProvider sharedInstance] fetchUserContactsWithHandler:^(NSArray * _Nonnull users)
      {
-         [self->_userContacts removeAllObjects];
-         
          if (users)
          {
-             self->_userContacts = [users mutableCopy];
+             self->_userContacts = [users copy];
          }
          
          [self.tableView reloadData];
@@ -108,6 +110,16 @@ static NSString *const cellId = @"userCell";
 - (IBAction)backHandler:(id)sender
 {
     [self.navigationController popViewControllerAnimated:YES];
+}
+
+- (NSIndexPath *)tableView:(UITableView *)tableView willSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    ChatController *chatController = [self.storyboard instantiateViewControllerWithIdentifier:chatControllerId];
+    [chatController setReceiverUser:_userContacts[indexPath.row]];
+    
+    [self.navigationController pushViewController:chatController animated:YES];
+    
+    return nil;
 }
 
 @end

@@ -9,6 +9,7 @@
 #import "LoginController.h"
 #import "DataProvider.h"
 #import "UIViewController+showAlert.h"
+#import "UINavigationController+leap.h"
 
 static NSString *const kSegueLoginChannelsID = @"Login2Channels";
 
@@ -26,6 +27,7 @@ static NSString *const kSegueLoginChannelsID = @"Login2Channels";
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    self.navigationController.loginViewController = self;
     
     [self setupControls];
 }

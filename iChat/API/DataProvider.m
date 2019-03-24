@@ -9,6 +9,7 @@
 #import "DataProvider.h"
 #import "User.h"
 #import "Constants.h"
+#import "Message.h"
 @import Firebase;
 
 static NSString *const kUserId = @"uid";
@@ -17,6 +18,7 @@ static NSString *const kUserId = @"uid";
 {
     FIRDatabaseReference *_databaseRef;
     NSCache *_imageCache;
+    User *_loggedUser;
 }
 
 + (instancetype)sharedInstance
@@ -35,9 +37,20 @@ static NSString *const kUserId = @"uid";
     if(self = [super init]){
         _databaseRef = [[FIRDatabase database] reference];
         _imageCache = [NSCache new];
+        _loggedUser = nil;
     }
     
     return self;
+}
+
+- (nullable NSString *)getCurrentUserId
+{
+    return [[NSUserDefaults standardUserDefaults] valueForKey:kUserId];
+}
+
+- (void)setCurrentUserId:(nullable NSString *)userId
+{
+    [[NSUserDefaults standardUserDefaults] setValue:userId forKey:kUserId];
 }
 
 - (void)signupUserWithName:(NSString *)name
@@ -82,7 +95,7 @@ static NSString *const kUserId = @"uid";
                       return;
                   }
                   
-                  [[NSUserDefaults standardUserDefaults] setValue:newUser.uid forKey:kUserId];
+                  [self setCurrentUserId:newUser.uid];
                   handler(nil);
               }];
          }];
@@ -102,7 +115,7 @@ static NSString *const kUserId = @"uid";
         return;
     }
     
-    NSString *userId = [[NSUserDefaults standardUserDefaults] valueForKey:kUserId];
+    NSString *userId = [self getCurrentUserId];
     if(userId == nil)
     {
         handler(false, nil);
@@ -112,14 +125,14 @@ static NSString *const kUserId = @"uid";
     FIRUser *user = [[FIRAuth auth] currentUser];
     if(user == nil)
     {
-        [[NSUserDefaults standardUserDefaults] setValue:@"" forKey:kUserId];
+        [self setCurrentUserId:nil];
         handler(false, nil);
         return;
     }
     
     if(![userId isEqualToString:user.uid])
     {
-        [[NSUserDefaults standardUserDefaults] setValue:@"" forKey:kUserId];
+        [self setCurrentUserId:nil];
         NSLog(@"%@ :: different current users", NSStringFromSelector(_cmd));
         
         NSError *error;
@@ -147,9 +160,29 @@ static NSString *const kUserId = @"uid";
         return;
     }
     
-    NSString *userId = [[NSUserDefaults standardUserDefaults] valueForKey:kUserId];
+    NSString *userId = [self getCurrentUserId];
     if(userId == nil)
     {
+        handler(nil);
+        return;
+    }
+    
+    [self fetchUserWithId:userId complitionHandler:handler];
+}
+
+
+- (void)fetchUserWithId:(NSString *)userId complitionHandler:(void(^)(User *))handler
+{
+    if(userId == nil)
+    {
+        NSLog(@"%@ :: userId is nil", NSStringFromSelector(_cmd));
+        handler(nil);
+        return;
+    }
+    
+    if(_databaseRef == nil)
+    {
+        NSLog(@"%@ :: FIRDatabaseReference is nil", NSStringFromSelector(_cmd));
         handler(nil);
         return;
     }
@@ -180,7 +213,7 @@ static NSString *const kUserId = @"uid";
         return;
     }
     
-    NSString *userId = [[NSUserDefaults standardUserDefaults] valueForKey:kUserId];
+    NSString *userId = [self getCurrentUserId];
     if(userId == nil)
     {
         handler(nil);
@@ -195,7 +228,7 @@ static NSString *const kUserId = @"uid";
          {
              User *user = [[User alloc] initWithName:snap.value[kUserName]
                                                email:snap.value[kUserEmail]
-                                                 uid:userId
+                                                 uid:snap.key
                                           profileURL:snap.value[kUserProfileImageURL]];
              [usersArray addObject:user];
          }
@@ -238,8 +271,8 @@ static NSString *const kUserId = @"uid";
              return;
          }
          
-         NSString *userID = authResult.user.uid;
-         [[NSUserDefaults standardUserDefaults] setValue:userID forKey:kUserId];
+         NSString *userId = authResult.user.uid;
+         [self setCurrentUserId:userId];
          handler(nil);
      }];
 }
@@ -256,7 +289,7 @@ static NSString *const kUserId = @"uid";
     }
     else
     {
-        [[NSUserDefaults standardUserDefaults] setValue:@"" forKey:kUserId];
+        [self setCurrentUserId:nil];
         handler(nil);
         return;
     }
@@ -363,6 +396,38 @@ static NSString *const kUserId = @"uid";
     //        handler(error, nil);
     //        return;
     //    }
+}
+
+- (void)sendMessage:(Message *)message withComplitionHandler:(void(^)(NSError *error))handler
+{
+    if(!message.messageText || !message.senderUserId || !message.receiverUserId)
+    {
+        return;
+    }
+    
+    if(_databaseRef == nil)
+    {
+        NSLog(@"%@ :: FIRDatabaseReference is nil", NSStringFromSelector(_cmd));
+        handler(nil);
+        return;
+    }
+    
+    FIRDatabaseReference *messageRef = [[_databaseRef child:messagesPath] childByAutoId];
+    
+    NSMutableDictionary *messageDict = [NSMutableDictionary dictionaryWithDictionary: [message dictionaryRepresentation]];
+    [messageDict setValue: [NSNumber numberWithInteger:[NSDate date].timeIntervalSince1970] forKey:kMessageTimestamp];
+    [messageRef updateChildValues:messageDict withCompletionBlock:^(NSError * _Nullable error, FIRDatabaseReference * _Nonnull ref)
+     {
+         if(error)
+         {
+             NSLog(@"%@ :: %@", NSStringFromSelector(_cmd), error.userInfo[@"NSLocalizedDescription"]);
+             handler(error);
+             return;
+         }
+         
+         handler(nil);
+         return;
+     }];
 }
 
 @end
