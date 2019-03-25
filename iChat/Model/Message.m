@@ -8,14 +8,29 @@
 
 #import "Message.h"
 #import "Constants.h"
+@import Firebase;
 
 @implementation Message
+
+- (id)initWithSenderUserId:(NSString *)senderUserId receiverUserId:(NSString*)receiverUserId messageText:(NSString *)messageText timestamp:(NSString *)timestamp
+{
+    if(self = [super init])
+    {
+        self.senderUserId = senderUserId;
+        self.receiverUserId = receiverUserId;
+        self.messageText = messageText;
+        _timestamp = timestamp;
+    }
+    
+    return self;
+}
 
 - (NSDictionary *)dictionaryRepresentation
 {
     return @{kMessageText : self.messageText,
              kMessageSenderUserId : self.senderUserId,
-             kMessageReceiverUserId : self.receiverUserId
+             kMessageReceiverUserId : self.receiverUserId,
+             kMessageTimestamp : FIRServerValue.timestamp
              };
 }
 

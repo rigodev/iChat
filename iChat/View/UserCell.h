@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface UserCell : UITableViewCell
 
 - (void)setNameText:(NSString *)name;
-- (void)setAvatarImage:(UIImage *)image;
+- (void)configureCellWithAvatarImage:(nullable UIImage *)image;
 - (void)configureDefaultCellView;
 
 @end

@@ -204,7 +204,7 @@ static NSString *const kUserId = @"uid";
      }];
 }
 
-- (void)fetchUserContactsWithHandler:(void(^)(NSArray *users))handler
+- (void)fetchContactsWithHandler:(void(^)(NSArray *users))handler
 {
     if(_databaseRef == nil)
     {
@@ -237,7 +237,7 @@ static NSString *const kUserId = @"uid";
      }];
 }
 
-- (void)removeUserContactsObservers
+- (void)removeContactsObservers
 {
     if(_databaseRef == nil)
     {
@@ -412,22 +412,135 @@ static NSString *const kUserId = @"uid";
         return;
     }
     
-    FIRDatabaseReference *messageRef = [[_databaseRef child:messagesPath] childByAutoId];
-    
-    NSMutableDictionary *messageDict = [NSMutableDictionary dictionaryWithDictionary: [message dictionaryRepresentation]];
-    [messageDict setValue: [NSNumber numberWithInteger:[NSDate date].timeIntervalSince1970] forKey:kMessageTimestamp];
-    [messageRef updateChildValues:messageDict withCompletionBlock:^(NSError * _Nullable error, FIRDatabaseReference * _Nonnull ref)
-     {
-         if(error)
+    if([message.receiverUserId isEqualToString:message.senderUserId])
+    {
+        FIRDatabaseReference *messageSenderRef = [[[[[_databaseRef child:usersPath] child:message.senderUserId] child:chatsPath] child:message.receiverUserId] childByAutoId];
+        
+        [messageSenderRef updateChildValues:[message dictionaryRepresentation] withCompletionBlock:^(NSError * _Nullable error, FIRDatabaseReference * _Nonnull ref)
          {
-             NSLog(@"%@ :: %@", NSStringFromSelector(_cmd), error.userInfo[@"NSLocalizedDescription"]);
-             handler(error);
+             if(error)
+             {
+                 NSLog(@"%@ :: %@", NSStringFromSelector(_cmd), error.userInfo[@"NSLocalizedDescription"]);
+                 handler(error);
+                 return;
+             }
+             
+             handler(nil);
              return;
+         }];
+    }
+    else
+    {
+        dispatch_async(dispatch_get_main_queue(),^{
+            FIRDatabaseReference *messageSenderRef = [[[[[self->_databaseRef child:usersPath] child:message.senderUserId] child:chatsPath] child:message.receiverUserId] childByAutoId];
+            [messageSenderRef updateChildValues:[message dictionaryRepresentation] withCompletionBlock:^(NSError * _Nullable error, FIRDatabaseReference * _Nonnull ref)
+             {
+                 if(error)
+                 {
+                     NSLog(@"%@ :: %@", NSStringFromSelector(_cmd), error.userInfo[@"NSLocalizedDescription"]);
+                     handler(error);
+                     return;
+                 }
+                 
+                 handler(nil);
+                 return;
+             }];
+        });
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            FIRDatabaseReference *messageReceiverRef = [[[[[self->_databaseRef child:usersPath] child:message.receiverUserId] child:chatsPath] child:message.senderUserId] childByAutoId];
+            [messageReceiverRef updateChildValues:[message dictionaryRepresentation] withCompletionBlock:^(NSError * _Nullable error, FIRDatabaseReference * _Nonnull ref)
+             {
+                 if(error)
+                 {
+                     NSLog(@"%@ :: %@", NSStringFromSelector(_cmd), error.userInfo[@"NSLocalizedDescription"]);
+                     handler(error);
+                     return;
+                 }
+                 
+                 handler(nil);
+                 return;
+             }];
+        });
+    }
+}
+
+
+// realize Firebase query, that observes only last users messages
+- (void)observeChatsForUserId:(NSString *)userId withComplitionHandler:(void(^)(NSArray *messages))handler
+{
+    if(_databaseRef == nil)
+    {
+        NSLog(@"%@ :: FIRDatabaseReference is nil", NSStringFromSelector(_cmd));
+        handler(nil);
+        return;
+    }
+    
+    FIRDatabaseReference *userChatsRef = [[[_databaseRef child:usersPath] child:userId] child:chatsPath];
+    [userChatsRef observeEventType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot)
+     {
+         NSMutableArray *messagesArray = [NSMutableArray array];
+         for(FIRDataSnapshot *snap in [[snapshot children] allObjects])
+         {
+             Message *message = [[Message alloc] initWithSenderUserId:snap.value[kMessageSenderUserId]
+                                                       receiverUserId:snap.value[kMessageReceiverUserId]
+                                                          messageText:snap.value[kMessageText]
+                                                            timestamp:snap.value[kMessageTimestamp]];
+             [messagesArray addObject:message];
          }
          
-         handler(nil);
-         return;
+         handler(messagesArray);
      }];
+}
+
+- (void)removeChatsObservingForUserId:(NSString *)userId
+{
+    if(_databaseRef == nil)
+    {
+        NSLog(@"%@ :: FIRDatabaseReference is nil", NSStringFromSelector(_cmd));
+        return;
+    }
+    
+    FIRDatabaseReference *userChatsRef = [[[_databaseRef child:usersPath] child:userId] child:chatsPath];
+    [userChatsRef removeAllObservers];
+}
+
+- (void)observeChatForUserId:(NSString *)userId withContactUserId:(NSString *)contactUserId WithComplitionHandler:(void(^)(NSArray *messages))handler
+{
+    if(_databaseRef == nil)
+    {
+        NSLog(@"%@ :: FIRDatabaseReference is nil", NSStringFromSelector(_cmd));
+        handler(nil);
+        return;
+    }
+    
+    FIRDatabaseReference *userChatRef = [[[[_databaseRef child:usersPath] child:userId] child:chatsPath] child:contactUserId];
+    [userChatRef observeEventType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot)
+     {
+         NSMutableArray *messagesArray = [NSMutableArray array];
+         for(FIRDataSnapshot *snap in [[snapshot children] allObjects])
+         {
+             Message *message = [[Message alloc] initWithSenderUserId:snap.value[kMessageSenderUserId]
+                                                       receiverUserId:snap.value[kMessageReceiverUserId]
+                                                          messageText:snap.value[kMessageText]
+                                                            timestamp:snap.value[kMessageTimestamp]];
+             [messagesArray addObject:message];
+         }
+         
+         handler(messagesArray);
+     }];
+}
+
+- (void)removeChatObservingForUserId:(NSString *)userId withContactUserId:(NSString *)contactUserId
+{
+    if(_databaseRef == nil)
+    {
+        NSLog(@"%@ :: FIRDatabaseReference is nil", NSStringFromSelector(_cmd));
+        return;
+    }
+    
+    FIRDatabaseReference *userChatWithContactRef = [[[[_databaseRef child:usersPath] child:userId] child:chatsPath] child:contactUserId];
+    [userChatWithContactRef removeAllObservers];
 }
 
 @end

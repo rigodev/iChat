@@ -30,9 +30,9 @@
     self.avatarImageView.layer.masksToBounds = true;
 }
 
-- (void)configureDefaultCellView
+- (void)configureCellWithAvatarImage:(UIImage *)image
 {
-    self.avatarImageView.image = [UIImage imageNamed:@"default-logo"];
+    self.avatarImageView.image = image;
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {

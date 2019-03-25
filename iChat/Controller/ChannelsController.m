@@ -9,10 +9,16 @@
 #import "ChannelsController.h"
 #import "DataProvider.h"
 #import "User.h"
+#import "Message.h"
 
 static NSString *const kLoginControllerID = @"LoginController";
+static NSString *const cellId = @"defaultCellId";
 
 @interface ChannelsController ()
+{
+    NSArray *_messages;
+    NSString *_currentUserId;
+}
 
 @end
 
@@ -22,6 +28,7 @@ static NSString *const kLoginControllerID = @"LoginController";
 {
     [super viewDidLoad];
     
+    _currentUserId = [[DataProvider sharedInstance] getCurrentUserId];
     [self getUserName];
 }
 
@@ -33,30 +40,44 @@ static NSString *const kLoginControllerID = @"LoginController";
 - (void)getUserName
 {
     [[DataProvider sharedInstance] fetchCurrentUserWithHandler:^(User * _Nonnull user)
+     {
+         if(user)
          {
-             if(user)
-             {
-                 self.navigationItem.title = user.name;
-             }
-         }];
+             self.navigationItem.title = user.name;
+         }
+     }];
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    
     self.navigationController.navigationBarHidden = NO;
+    [self startChatObserving];
 }
 
-#pragma mark - Table view data source
-
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+- (void)viewDidDisappear:(BOOL)animated
 {
-    return 0;
+    [self stopChatObserving];
+    [super viewDidDisappear:animated];
 }
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+- (void)startChatObserving
 {
-    return 0;
+    NSString *currentUserId = [[DataProvider sharedInstance] getCurrentUserId];
+    [[DataProvider sharedInstance] observeChatsForUserId:currentUserId withComplitionHandler:^(NSArray * _Nonnull messages)
+    {
+        if (messages)
+        {
+            self->_messages = [messages copy];
+            [self.tableView reloadData];
+        }
+    }];
+}
+
+- (void)stopChatObserving
+{
+    [[DataProvider sharedInstance] removeChatsObservingForUserId:_currentUserId];
 }
 
 - (IBAction)logoutTapHandle:(id)sender
@@ -67,19 +88,31 @@ static NSString *const kLoginControllerID = @"LoginController";
          {
              return;
          }
-
+         
          [self.navigationController popToRootViewControllerAnimated:YES];
      }];
 }
 
-/*
- - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
- UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:<#@"reuseIdentifier"#> forIndexPath:indexPath];
- 
- // Configure the cell...
- 
- return cell;
- }
- */
+#pragma mark - Table view data source
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    return 1;
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    return _messages.count;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellId forIndexPath:indexPath];
+    Message *message = _messages[indexPath.row];
+    cell.detailTextLabel.text = message.messageText;
+    cell.textLabel.text = message.senderUserId;
+
+    return cell;
+}
 
 @end

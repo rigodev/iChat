@@ -17,7 +17,7 @@ static NSString *const chatControllerId = @"ChatController";
 
 @interface ContactsController ()
 {
-    NSArray *_userContacts;
+    NSArray *_contacts;
 }
 
 @end
@@ -40,31 +40,30 @@ static NSString *const chatControllerId = @"ChatController";
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    [self startUserContactsObserving];
+    [self startContactsObserving];
 }
 
 - (void)viewDidDisappear:(BOOL)animated
 {
-    [self stopUserContactsObserving];
+    [self stopContactsObserving];
     [super viewDidDisappear:animated];
 }
 
-- (void)startUserContactsObserving
+- (void)startContactsObserving
 {
-    [[DataProvider sharedInstance] fetchUserContactsWithHandler:^(NSArray * _Nonnull users)
+    [[DataProvider sharedInstance] fetchContactsWithHandler:^(NSArray * _Nonnull users)
      {
          if (users)
          {
-             self->_userContacts = [users copy];
+             self->_contacts = [users copy];
+             [self.tableView reloadData];
          }
-         
-         [self.tableView reloadData];
      }];
 }
 
-- (void)stopUserContactsObserving
+- (void)stopContactsObserving
 {
-    [[DataProvider sharedInstance] removeUserContactsObservers];
+    [[DataProvider sharedInstance] removeContactsObservers];
 }
 
 #pragma mark - Table view data source
@@ -76,17 +75,17 @@ static NSString *const chatControllerId = @"ChatController";
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return _userContacts.count;
+    return _contacts.count;
 }
 
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    User *userContact = _userContacts[indexPath.row];
+    User *userContact = _contacts[indexPath.row];
     
     UserCell *cell = [tableView dequeueReusableCellWithIdentifier:cellId forIndexPath:indexPath];
     [cell setNameText:userContact.name];
-    [cell configureDefaultCellView];
+//    [cell configureCellWithAvatarImage:nil];
     
     [[DataProvider sharedInstance] getProfileImageFromURL:userContact.profileURL complitionHandler:^(NSError * _Nonnull error, NSData * _Nonnull imageData)
      {
@@ -94,7 +93,7 @@ static NSString *const chatControllerId = @"ChatController";
          {
              dispatch_async(dispatch_get_main_queue(), ^
                             {
-                                [cell setAvatarImage:[UIImage imageWithData:imageData]];
+                                [cell configureCellWithAvatarImage:[UIImage imageWithData:imageData]];
                             });
          }
      }];
@@ -115,7 +114,7 @@ static NSString *const chatControllerId = @"ChatController";
 - (NSIndexPath *)tableView:(UITableView *)tableView willSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     ChatController *chatController = [self.storyboard instantiateViewControllerWithIdentifier:chatControllerId];
-    [chatController setReceiverUser:_userContacts[indexPath.row]];
+    [chatController setReceiverUser:_contacts[indexPath.row]];
     
     [self.navigationController pushViewController:chatController animated:YES];
     

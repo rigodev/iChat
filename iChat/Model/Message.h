@@ -15,8 +15,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, nonnull) NSString *messageText;
 @property (nonatomic, copy, nonnull) NSString *senderUserId;
 @property (nonatomic, copy, nonnull) NSString *receiverUserId;
+@property (nonatomic, copy, readonly) NSString *timestamp;
 
 - (NSDictionary *)dictionaryRepresentation;
+- (id)initWithSenderUserId:(NSString *)senderUserId receiverUserId:(NSString*)receiverUserId messageText:(NSString *)messageText timestamp:(NSString *)timestamp;
 
 @end
 

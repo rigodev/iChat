@@ -11,7 +11,7 @@
 
 // FireBase paths from root
 static NSString *const usersPath = @"users";
-static NSString *const messagesPath = @"messages";
+static NSString *const chatsPath = @"chats";
 
 // FireBase root/[usersPath]/[userID]/
 static NSString *const kUserName = @"name";
