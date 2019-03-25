@@ -11,17 +11,18 @@
 #import "User.h"
 #import "Message.h"
 #import "UINavigationController+leap.h"
+#import "MessageCell.h"
 
 static NSString *const cellId = @"cellId";
 
-@interface ChatController () <UITextFieldDelegate, UITableViewDataSource>
+@interface ChatController () <UITextFieldDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout>
 {
     User *_receiverUser;
     NSString *_currentUserId, *_contactUserId;
     NSArray *_messages;
 }
 
-@property (weak, nonatomic) IBOutlet UITableView *chatTableView;
+@property (weak, nonatomic) IBOutlet UICollectionView *chatCollectionView;
 @property (weak, nonatomic) IBOutlet UITextField *messageField;
 
 @end
@@ -32,9 +33,14 @@ static NSString *const cellId = @"cellId";
 {
     [super viewDidLoad];
     
-    self.messageField.delegate = self;
-    self.chatTableView.dataSource = self;
     _currentUserId = [[DataProvider sharedInstance] getCurrentUserId];
+    [self setupChatViews];
+}
+
+- (void)setupChatViews
+{
+    self.chatCollectionView.alwaysBounceVertical = true;
+    self.messageField.delegate = self;
 }
 
 - (UIStatusBarStyle)preferredStatusBarStyle
@@ -61,7 +67,7 @@ static NSString *const cellId = @"cellId";
         if(messages)
         {
             self-> _messages = messages;
-            [self.chatTableView reloadData];
+            [self.chatCollectionView reloadData];
         }
     }];
 }
@@ -110,12 +116,39 @@ static NSString *const cellId = @"cellId";
     _contactUserId = receiverUser.uid;
 }
 
-#pragma mark - Table view data source
+#pragma mark - CollectionView data source
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+- (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
 {
     return 1;
 }
+
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
+{
+    return _messages.count;
+}
+
+- (__kindof UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    MessageCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:cellId forIndexPath:indexPath];
+    
+    Message *message = _messages[indexPath.row];
+//    NSDateFormatter *dateFormatter = [NSDateFormatter new];
+//    dateFormatter.dateFormat = @"HH:mm:ss";
+    
+    [cell setMessageText:message.messageText];
+    
+    return cell;
+}
+
+#pragma mark - CollectionViewFlowLayout delegate
+
+- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    return CGSizeMake(self.view.frame.size.width, 80);
+}
+
+////////////////////
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {

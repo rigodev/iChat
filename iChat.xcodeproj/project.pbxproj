@@ -20,6 +20,7 @@
 		0F4A1C182242C84300D3AE03 /* UIViewController+showAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 0F4A1C172242C84300D3AE03 /* UIViewController+showAlert.m */; };
 		0F725F7222438EE1006CFF15 /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 0F725F7122438EE1006CFF15 /* User.m */; };
 		0F725F7622439D29006CFF15 /* ContactsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0F725F7522439D29006CFF15 /* ContactsController.m */; };
+		0FA286272249306F0061D65B /* MessageCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 0FA286262249306F0061D65B /* MessageCell.m */; };
 		0FA658942246A125009045D9 /* ChatController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0FA658932246A125009045D9 /* ChatController.m */; };
 		0FD718C4224760540097363A /* UINavigationController+leap.m in Sources */ = {isa = PBXBuildFile; fileRef = 0FD718C3224760540097363A /* UINavigationController+leap.m */; };
 		0FD718C72247D24F0097363A /* Message.m in Sources */ = {isa = PBXBuildFile; fileRef = 0FD718C62247D24F0097363A /* Message.m */; };
@@ -52,6 +53,8 @@
 		0F725F73224391D5006CFF15 /* Constants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
 		0F725F7422439D29006CFF15 /* ContactsController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ContactsController.h; sourceTree = "<group>"; };
 		0F725F7522439D29006CFF15 /* ContactsController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ContactsController.m; sourceTree = "<group>"; };
+		0FA286252249306F0061D65B /* MessageCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MessageCell.h; sourceTree = "<group>"; };
+		0FA286262249306F0061D65B /* MessageCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MessageCell.m; sourceTree = "<group>"; };
 		0FA658922246A125009045D9 /* ChatController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChatController.h; sourceTree = "<group>"; };
 		0FA658932246A125009045D9 /* ChatController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ChatController.m; sourceTree = "<group>"; };
 		0FD718C2224760540097363A /* UINavigationController+leap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UINavigationController+leap.h"; sourceTree = "<group>"; };
@@ -155,6 +158,8 @@
 				0F4A1BDB2240E49B00D3AE03 /* Main.storyboard */,
 				0F3F05FA2244220B0040EA52 /* UserCell.h */,
 				0F3F05FB2244220B0040EA52 /* UserCell.m */,
+				0FA286252249306F0061D65B /* MessageCell.h */,
+				0FA286262249306F0061D65B /* MessageCell.m */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -311,6 +316,7 @@
 				0F4A1BE52240E49C00D3AE03 /* main.m in Sources */,
 				0F725F7622439D29006CFF15 /* ContactsController.m in Sources */,
 				0F725F7222438EE1006CFF15 /* User.m in Sources */,
+				0FA286272249306F0061D65B /* MessageCell.m in Sources */,
 				0F4A1BD72240E49B00D3AE03 /* AppDelegate.m in Sources */,
 				0F4A1BF12240EDFB00D3AE03 /* LoginController.m in Sources */,
 				0F4A1BF72240F15A00D3AE03 /* ChannelsController.m in Sources */,

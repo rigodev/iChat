@@ -424,7 +424,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="QUK-g5-6hg" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2609" y="-854"/>
+            <point key="canvasLocation" x="2609" y="36"/>
         </scene>
         <!--Чат-->
         <scene sceneID="LQ8-Uz-PTr">
@@ -476,50 +476,56 @@
                                     <constraint firstItem="j3Y-n6-i1D" firstAttribute="leading" secondItem="lTr-Ri-hrU" secondAttribute="trailing" constant="8" id="dqX-Y5-WjS"/>
                                 </constraints>
                             </view>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="6lc-95-x4H">
+                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="Y5x-QQ-Z0c">
                                 <rect key="frame" x="0.0" y="64" width="375" height="559"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="cellId" textLabel="hfd-GF-5FJ" detailTextLabel="MOB-w3-q3K" style="IBUITableViewCellStyleSubtitle" id="Vh8-0f-D1a">
-                                        <rect key="frame" x="0.0" y="28" width="375" height="44"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Vh8-0f-D1a" id="MkE-XB-Q1f">
-                                            <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="hUx-iJ-DCo">
+                                    <size key="itemSize" width="50" height="50"/>
+                                    <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                                    <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                                    <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                </collectionViewFlowLayout>
+                                <cells>
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="cellId" id="qF3-9q-Syh" customClass="MessageCell">
+                                        <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO">
+                                            <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="hfd-GF-5FJ">
-                                                    <rect key="frame" x="15" y="5" width="33.5" height="20.5"/>
-                                                    <autoresizingMask key="autoresizingMask"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <nil key="textColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Detail" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="MOB-w3-q3K">
-                                                    <rect key="frame" x="15" y="25.5" width="33" height="14.5"/>
-                                                    <autoresizingMask key="autoresizingMask"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                                                    <nil key="textColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
+                                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="right" translatesAutoresizingMaskIntoConstraints="NO" id="Txc-tJ-lf5">
+                                                    <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                                </textView>
                                             </subviews>
-                                        </tableViewCellContentView>
-                                    </tableViewCell>
-                                </prototypes>
+                                        </view>
+                                        <constraints>
+                                            <constraint firstItem="Txc-tJ-lf5" firstAttribute="top" secondItem="qF3-9q-Syh" secondAttribute="top" id="AIU-In-fbZ"/>
+                                            <constraint firstItem="Txc-tJ-lf5" firstAttribute="leading" secondItem="qF3-9q-Syh" secondAttribute="leading" id="l5D-Oc-2g5"/>
+                                            <constraint firstAttribute="bottom" secondItem="Txc-tJ-lf5" secondAttribute="bottom" id="nB5-y8-zLN"/>
+                                            <constraint firstAttribute="trailing" secondItem="Txc-tJ-lf5" secondAttribute="trailing" id="yE5-PM-2dQ"/>
+                                        </constraints>
+                                        <connections>
+                                            <outlet property="messageTextView" destination="Txc-tJ-lf5" id="aHm-1j-mkX"/>
+                                        </connections>
+                                    </collectionViewCell>
+                                </cells>
                                 <connections>
-                                    <outlet property="dataSource" destination="LtO-Xk-JhN" id="Yl3-X0-RNK"/>
-                                    <outlet property="delegate" destination="LtO-Xk-JhN" id="GxX-mo-UuA"/>
+                                    <outlet property="dataSource" destination="LtO-Xk-JhN" id="CKu-p9-jfT"/>
+                                    <outlet property="delegate" destination="LtO-Xk-JhN" id="0Z1-tS-bVm"/>
                                 </connections>
-                            </tableView>
+                            </collectionView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="88H-mX-ydH" firstAttribute="bottom" secondItem="g7U-Gs-ffh" secondAttribute="bottom" id="5CD-vd-PdU"/>
-                            <constraint firstItem="6lc-95-x4H" firstAttribute="trailing" secondItem="g7U-Gs-ffh" secondAttribute="trailing" id="6P0-Q0-6Cf"/>
+                            <constraint firstItem="88H-mX-ydH" firstAttribute="top" secondItem="Y5x-QQ-Z0c" secondAttribute="bottom" id="EDO-mp-FGx"/>
+                            <constraint firstItem="Y5x-QQ-Z0c" firstAttribute="trailing" secondItem="g7U-Gs-ffh" secondAttribute="trailing" id="Iad-XB-hng"/>
                             <constraint firstItem="88H-mX-ydH" firstAttribute="leading" secondItem="g7U-Gs-ffh" secondAttribute="leading" id="TIe-6R-iFT"/>
                             <constraint firstItem="88H-mX-ydH" firstAttribute="trailing" secondItem="g7U-Gs-ffh" secondAttribute="trailing" id="VRT-NY-ErJ"/>
-                            <constraint firstItem="6lc-95-x4H" firstAttribute="top" secondItem="g7U-Gs-ffh" secondAttribute="top" id="gOe-ZY-v2P"/>
-                            <constraint firstItem="6lc-95-x4H" firstAttribute="leading" secondItem="g7U-Gs-ffh" secondAttribute="leading" id="gk6-5k-wIo"/>
-                            <constraint firstItem="88H-mX-ydH" firstAttribute="top" secondItem="6lc-95-x4H" secondAttribute="bottom" id="hkR-Ws-ElA"/>
+                            <constraint firstItem="Y5x-QQ-Z0c" firstAttribute="leading" secondItem="g7U-Gs-ffh" secondAttribute="leading" id="gFz-bH-j16"/>
+                            <constraint firstItem="Y5x-QQ-Z0c" firstAttribute="top" secondItem="g7U-Gs-ffh" secondAttribute="top" id="maH-XW-g6N"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="g7U-Gs-ffh"/>
                     </view>
@@ -532,13 +538,13 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="chatTableView" destination="6lc-95-x4H" id="MiA-af-hae"/>
+                        <outlet property="chatCollectionView" destination="Y5x-QQ-Z0c" id="R6N-qq-6ck"/>
                         <outlet property="messageField" destination="lTr-Ri-hrU" id="xrr-Qz-Nr2"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Trb-0b-j6D" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2608.8000000000002" y="35.532233883058474"/>
+            <point key="canvasLocation" x="2608.8000000000002" y="852.3238380809596"/>
         </scene>
     </scenes>
     <resources>
@@ -551,7 +557,7 @@
         <image name="send-button" width="24" height="24"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="nUA-vd-ezy"/>
+        <segue reference="HKY-1r-wKF"/>
         <segue reference="sIn-Sk-uOJ"/>
     </inferredMetricsTieBreakers>
 </document>

@@ -14,7 +14,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)setNameText:(NSString *)name;
 - (void)configureCellWithAvatarImage:(nullable UIImage *)image;
-- (void)configureDefaultCellView;
 
 @end
 
