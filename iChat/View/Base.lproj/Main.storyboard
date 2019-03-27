@@ -419,7 +419,7 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <segue destination="LtO-Xk-JhN" kind="show" identifier="" id="HKY-1r-wKF"/>
+                        <segue destination="LtO-Xk-JhN" kind="show" identifier="Contacts2Chat" id="HKY-1r-wKF"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="QUK-g5-6hg" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -477,9 +477,9 @@
                                 </constraints>
                             </view>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="Y5x-QQ-Z0c">
-                                <rect key="frame" x="0.0" y="64" width="375" height="559"/>
+                                <rect key="frame" x="5" y="65" width="370" height="557"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="hUx-iJ-DCo">
+                                <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="P37-AV-esl">
                                     <size key="itemSize" width="50" height="50"/>
                                     <size key="headerReferenceSize" width="0.0" height="0.0"/>
                                     <size key="footerReferenceSize" width="0.0" height="0.0"/>
@@ -488,25 +488,26 @@
                                 <cells>
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="cellId" id="qF3-9q-Syh" customClass="MessageCell">
                                         <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO">
                                             <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="right" translatesAutoresizingMaskIntoConstraints="NO" id="Txc-tJ-lf5">
+                                                <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="QXV-HK-QQf">
                                                     <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                </view>
+                                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Txc-tJ-lf5">
+                                                    <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                     <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                                 </textView>
                                             </subviews>
                                         </view>
-                                        <constraints>
-                                            <constraint firstItem="Txc-tJ-lf5" firstAttribute="top" secondItem="qF3-9q-Syh" secondAttribute="top" id="AIU-In-fbZ"/>
-                                            <constraint firstItem="Txc-tJ-lf5" firstAttribute="leading" secondItem="qF3-9q-Syh" secondAttribute="leading" id="l5D-Oc-2g5"/>
-                                            <constraint firstAttribute="bottom" secondItem="Txc-tJ-lf5" secondAttribute="bottom" id="nB5-y8-zLN"/>
-                                            <constraint firstAttribute="trailing" secondItem="Txc-tJ-lf5" secondAttribute="trailing" id="yE5-PM-2dQ"/>
-                                        </constraints>
                                         <connections>
+                                            <outlet property="bubbleView" destination="QXV-HK-QQf" id="12k-1N-oBw"/>
                                             <outlet property="messageTextView" destination="Txc-tJ-lf5" id="aHm-1j-mkX"/>
                                         </connections>
                                     </collectionViewCell>
@@ -519,13 +520,13 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="88H-mX-ydH" firstAttribute="bottom" secondItem="g7U-Gs-ffh" secondAttribute="bottom" id="5CD-vd-PdU"/>
-                            <constraint firstItem="88H-mX-ydH" firstAttribute="top" secondItem="Y5x-QQ-Z0c" secondAttribute="bottom" id="EDO-mp-FGx"/>
+                            <constraint firstItem="88H-mX-ydH" firstAttribute="top" secondItem="Y5x-QQ-Z0c" secondAttribute="bottom" constant="1" id="4DP-Pi-4kx"/>
                             <constraint firstItem="Y5x-QQ-Z0c" firstAttribute="trailing" secondItem="g7U-Gs-ffh" secondAttribute="trailing" id="Iad-XB-hng"/>
+                            <constraint firstItem="g7U-Gs-ffh" firstAttribute="bottom" secondItem="88H-mX-ydH" secondAttribute="bottom" id="P7M-da-cG7"/>
                             <constraint firstItem="88H-mX-ydH" firstAttribute="leading" secondItem="g7U-Gs-ffh" secondAttribute="leading" id="TIe-6R-iFT"/>
                             <constraint firstItem="88H-mX-ydH" firstAttribute="trailing" secondItem="g7U-Gs-ffh" secondAttribute="trailing" id="VRT-NY-ErJ"/>
-                            <constraint firstItem="Y5x-QQ-Z0c" firstAttribute="leading" secondItem="g7U-Gs-ffh" secondAttribute="leading" id="gFz-bH-j16"/>
-                            <constraint firstItem="Y5x-QQ-Z0c" firstAttribute="top" secondItem="g7U-Gs-ffh" secondAttribute="top" id="maH-XW-g6N"/>
+                            <constraint firstItem="Y5x-QQ-Z0c" firstAttribute="leading" secondItem="g7U-Gs-ffh" secondAttribute="leading" constant="5" id="gFz-bH-j16"/>
+                            <constraint firstItem="Y5x-QQ-Z0c" firstAttribute="top" secondItem="g7U-Gs-ffh" secondAttribute="top" constant="1" id="maH-XW-g6N"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="g7U-Gs-ffh"/>
                     </view>
@@ -540,6 +541,7 @@
                     <connections>
                         <outlet property="chatCollectionView" destination="Y5x-QQ-Z0c" id="R6N-qq-6ck"/>
                         <outlet property="messageField" destination="lTr-Ri-hrU" id="xrr-Qz-Nr2"/>
+                        <outlet property="sendContainerView" destination="88H-mX-ydH" id="thy-sP-G4H"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Trb-0b-j6D" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -558,6 +560,6 @@
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="HKY-1r-wKF"/>
-        <segue reference="sIn-Sk-uOJ"/>
+        <segue reference="e3Q-J4-f9o"/>
     </inferredMetricsTieBreakers>
 </document>

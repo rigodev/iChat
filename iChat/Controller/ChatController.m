@@ -24,10 +24,14 @@ static NSString *const cellId = @"cellId";
 
 @property (weak, nonatomic) IBOutlet UICollectionView *chatCollectionView;
 @property (weak, nonatomic) IBOutlet UITextField *messageField;
+@property (weak, nonatomic) IBOutlet UIView *sendContainerView;
 
 @end
 
 @implementation ChatController
+{
+    BOOL _initialScrollDone;
+}
 
 - (void)viewDidLoad
 {
@@ -35,12 +39,41 @@ static NSString *const cellId = @"cellId";
     
     _currentUserId = [[DataProvider sharedInstance] getCurrentUserId];
     [self setupChatViews];
+    [self setupKeyboardObservers];
 }
 
 - (void)setupChatViews
 {
+    _initialScrollDone = NO;
     self.chatCollectionView.alwaysBounceVertical = true;
     self.messageField.delegate = self;
+}
+
+- (void)setupKeyboardObservers
+{
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleKeyboardWillShow:)
+                                                 name:UIKeyboardWillShowNotification
+                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleKeyboardWillHide:)
+                                                 name:UIKeyboardWillHideNotification
+                                               object:nil];
+}
+
+- (void)handleKeyboardWillHide:(NSNotification *)notification
+{
+    NSLog(@"frame = %f", self.sendContainerView.frame.size.height);
+    [self.sendContainerView.bottomAnchor constraintEqualToAnchor:self.view.bottomAnchor].active = true;
+    NSLog(@"frame = %f", self.sendContainerView.frame.size.height);
+}
+
+- (void)handleKeyboardWillShow:(NSNotification *)notification
+{
+    NSLog(@"frame = %f", self.sendContainerView.frame.size.height);
+    CGRect keyboardFrame = [notification.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
+    [self.sendContainerView.bottomAnchor constraintEqualToAnchor:self.view.bottomAnchor constant:- keyboardFrame.size.height].active = true;
+    NSLog(@"frame = %f", self.sendContainerView.frame.size.height);
 }
 
 - (UIStatusBarStyle)preferredStatusBarStyle
@@ -54,6 +87,15 @@ static NSString *const cellId = @"cellId";
     [self startChatObserving];
 }
 
+- (void)scrollToLastMessageWithAnimation:(BOOL)animated
+{
+    if(self->_messages.count > 0)
+    {
+        NSIndexPath *lastItemPath = [NSIndexPath indexPathForItem:self->_messages.count - 1 inSection:0];
+        [self.chatCollectionView scrollToItemAtIndexPath:lastItemPath atScrollPosition:UICollectionViewScrollPositionTop animated:animated];
+    }
+}
+
 - (void)viewDidDisappear:(BOOL)animated
 {
     [self stopChatObserving];
@@ -63,13 +105,19 @@ static NSString *const cellId = @"cellId";
 - (void)startChatObserving
 {
     [[DataProvider sharedInstance] observeChatForUserId:_currentUserId withContactUserId:_contactUserId WithComplitionHandler:^(NSArray * _Nonnull messages)
-    {
-        if(messages)
-        {
-            self-> _messages = messages;
-            [self.chatCollectionView reloadData];
-        }
-    }];
+     {
+         if(messages)
+         {
+             self-> _messages = messages;
+             [self.chatCollectionView reloadData];
+             
+             if(!self->_initialScrollDone)
+             {
+                 [self scrollToLastMessageWithAnimation:NO];
+                 self->_initialScrollDone = YES;
+             }
+         }
+     }];
 }
 
 - (void)stopChatObserving
@@ -101,13 +149,19 @@ static NSString *const cellId = @"cellId";
         message.receiverUserId = _contactUserId;
         
         [[DataProvider sharedInstance] sendMessage:message withComplitionHandler:^(NSError * _Nonnull error)
-        {
-            if(!error)
-            {
-                self.messageField.text = @"";
-            }
-        }];
+         {
+             if(!error)
+             {
+                 self.messageField.text = nil;
+                 [self scrollToLastMessageWithAnimation:YES];
+             }
+         }];
     }
+}
+
+- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
+{
+    [self.chatCollectionView.collectionViewLayout invalidateLayout];
 }
 
 - (void)setReceiverUser:(User *)receiverUser;
@@ -133,10 +187,29 @@ static NSString *const cellId = @"cellId";
     MessageCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:cellId forIndexPath:indexPath];
     
     Message *message = _messages[indexPath.row];
-//    NSDateFormatter *dateFormatter = [NSDateFormatter new];
-//    dateFormatter.dateFormat = @"HH:mm:ss";
+    //    NSDateFormatter *dateFormatter = [NSDateFormatter new];
+    //    dateFormatter.dateFormat = @"HH:mm:ss";
+    //    cell.detailTextLabel.text = [dateFormatter stringFromDate:[NSDate dateWithTimeIntervalSince1970: message.timestamp.doubleValue/1000.0]];
     
+    cell.bubbleWidthAnchor.constant = [self calculateFrameForText:message.messageText].width + 20;
     [cell setMessageText:message.messageText];
+        
+    NSLog(@"%@", message.messageText);
+    
+    
+    if([message.senderUserId isEqualToString:_currentUserId])
+    {
+        [cell setBubbleBackgroundColor:cell.blueBubbleColor];
+        cell.bubbleRightAnchor.active = true;
+        cell.bubbleLeftAnchor.active = false;
+    }
+    else
+    {
+        [cell setBubbleBackgroundColor:cell.greyBubbleColor];
+        cell.bubbleRightAnchor.active = false;
+        cell.bubbleLeftAnchor.active = true;
+    }
+    
     
     return cell;
 }
@@ -145,28 +218,25 @@ static NSString *const cellId = @"cellId";
 
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    return CGSizeMake(self.view.frame.size.width, 80);
+    Message *message = _messages[indexPath.item];
+    CGSize messageFrameSize = [self calculateFrameForText:message.messageText];
+    return CGSizeMake(self.chatCollectionView.frame.size.width - 5, messageFrameSize.height + 20);
 }
 
-////////////////////
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+- (CGSize)calculateFrameForText:(NSString *)text
 {
-    return _messages.count;
-}
-
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellId forIndexPath:indexPath];
-   
-    Message *message = _messages[indexPath.row];
-    NSDateFormatter *dateFormatter = [NSDateFormatter new];
-    dateFormatter.dateFormat = @"HH:mm:ss";
+    CGSize size = CGSizeMake(200, NSUIntegerMax);
     
-    cell.textLabel.text = message.messageText;
-    cell.detailTextLabel.text = [dateFormatter stringFromDate:[NSDate dateWithTimeIntervalSince1970: message.timestamp.doubleValue/1000.0]];
+    CGRect textRect = [text boundingRectWithSize:size
+                                         options:(NSStringDrawingUsesLineFragmentOrigin| NSStringDrawingUsesFontLeading)
+                                      attributes:@{NSFontAttributeName : [UIFont systemFontOfSize:16]}
+                                         context:nil];
+    return textRect.size;
+}
 
-    return cell;
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 @end

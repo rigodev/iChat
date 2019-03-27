@@ -13,6 +13,10 @@ NS_ASSUME_NONNULL_BEGIN
 @interface MessageCell : UICollectionViewCell
 
 - (void)setMessageText:(NSString *)text;
+- (void)setBubbleBackgroundColor:(UIColor *)color;
+
+@property (nonatomic, strong) NSLayoutConstraint *bubbleWidthAnchor, *bubbleRightAnchor, *bubbleLeftAnchor;
+@property (nonatomic, strong, readonly) UIColor *blueBubbleColor, *greyBubbleColor;
 
 @end
 
