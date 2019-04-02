@@ -11,8 +11,7 @@
 #import "Constants.h"
 #import "Message.h"
 @import Firebase;
-
-static NSString *const kUserId = @"uid";
+@import AVFoundation;
 
 @implementation DataProvider
 {
@@ -295,11 +294,17 @@ static NSString *const kUserId = @"uid";
     }
 }
 
-- (void)uploadImage:(NSData *)imageData complitionHandler:(void(^)(NSError *error, NSString *imageURLString))handler
+- (void)sendMessage:(Message *)message withImage:(UIImage *)uploadingImage compressionQuality:(CGFloat)compressionQuality complitionHandler:(void(^)(NSError *error))handler
 {
-    NSString *nameUID = [NSUUID UUID].UUIDString;
+    if(!uploadingImage || !message.senderUserId || !message.receiverUserId)
+    {
+        return;
+    }
     
-    FIRStorageReference *storageRef = [[[FIRStorage storage].reference child:profileImagesPath] child:nameUID];
+    NSData *imageData = UIImageJPEGRepresentation(uploadingImage, compressionQuality);
+    NSString *imageNameUID = [NSUUID UUID].UUIDString;
+    
+    FIRStorageReference *storageRef = [[[FIRStorage storage].reference child:messageImagesPath] child:imageNameUID];
     if (storageRef)
     {
         [storageRef putData:imageData metadata:nil completion:^(FIRStorageMetadata * _Nullable metadata, NSError * _Nullable error)
@@ -307,12 +312,35 @@ static NSString *const kUserId = @"uid";
              if(error)
              {
                  NSLog(@"%@ :: %@", NSStringFromSelector(_cmd), error.userInfo[@"NSLocalizedDescription"]);
-                 handler(error, nil);
+                 handler(error);
                  return;
              }
              
-             handler(nil, metadata.path);
-             return;
+             if(!metadata || !metadata.path)
+             {
+                 NSLog(@"%@ :: %@", NSStringFromSelector(_cmd), @"metadata(.path) is nil");
+                 NSError *error = [NSError errorWithDomain:NSStringFromSelector(_cmd)
+                                                      code:0
+                                                  userInfo:@{NSLocalizedDescriptionKey : @"metadata(.path) is nil"}];
+                 handler(error);
+                 return;
+             }
+             
+             [self saveLocalImageData:imageData withImageName:[metadata.path lastPathComponent]];
+             
+             message.imageUID = [metadata.path lastPathComponent];
+             [self sendMessage:message complitionHandler:^(NSError * _Nonnull error)
+              {
+                  if(error)
+                  {
+                      NSLog(@"%@ :: %@", NSStringFromSelector(_cmd), error.userInfo[@"NSLocalizedDescription"]);
+                      handler(error);
+                      return;
+                  }
+                  
+                  handler(nil);
+                  return;
+              }];
          }];
     }
     else
@@ -321,12 +349,283 @@ static NSString *const kUserId = @"uid";
         NSError *error = [NSError errorWithDomain:NSStringFromSelector(_cmd)
                                              code:0
                                          userInfo:@{NSLocalizedDescriptionKey : @"FIRStorageReference is nil"}];
-        handler(error, nil);
+        handler(error);
         return;
     }
 }
 
-- (void)getProfileImageFromURL:(NSString *)imageURL complitionHandler:(void(^)(NSError *error, NSData *imageData))handler
+- (void)sendMessage:(Message *)message
+       withVideoURL:(NSURL*)videoURL
+  complitionHandler:(void(^)(NSError *error))handler
+{
+    if(!videoURL || !message.senderUserId || !message.receiverUserId)
+    {
+        return;
+    }
+    
+    NSString *videoNameUID = [NSUUID UUID].UUIDString;
+    
+    FIRStorageReference *storageRef = [[[FIRStorage storage].reference child:messageVideosPath] child:videoNameUID];
+    if (!storageRef)
+    {NSLog(@"%@ :: %@", NSStringFromSelector(_cmd), @"FIRStorageReference is nil");
+            NSError *error = [NSError errorWithDomain:NSStringFromSelector(_cmd)
+                                                 code:0
+                                             userInfo:@{NSLocalizedDescriptionKey : @"FIRStorageReference is nil"}];
+            handler(error);
+            return;
+    }
+    
+    UIImage *snapshotImage = [self snapshotVideoForFileURL:videoURL];
+    if(!snapshotImage)
+    {
+        NSString *errorMessage = @"could not make SnapshotImage";
+        NSLog(@"%@ :: %@", NSStringFromSelector(_cmd), errorMessage);
+        NSError *error = [NSError errorWithDomain:NSStringFromSelector(_cmd)
+                                             code:0
+                                         userInfo:@{NSLocalizedDescriptionKey : errorMessage}];
+        handler(error);
+        return;
+    }
+    
+    [storageRef putFile:videoURL metadata:nil completion:^(FIRStorageMetadata * _Nullable metadata, NSError * _Nullable error)
+     {
+         if(error)
+         {
+             NSLog(@"%@ :: %@", NSStringFromSelector(_cmd), error.userInfo[@"NSLocalizedDescription"]);
+             handler(error);
+             return;
+         }
+         
+         if(!metadata || !metadata.path)
+         {
+             NSLog(@"%@ :: %@", NSStringFromSelector(_cmd), @"metadata(.path) is nil");
+             NSError *error = [NSError errorWithDomain:NSStringFromSelector(_cmd)
+                                                  code:0
+                                              userInfo:@{NSLocalizedDescriptionKey : @"metadata(.path) is nil"}];
+             handler(error);
+             return;
+         }
+         
+         message.videoUID = [metadata.path lastPathComponent];
+         [self saveLocalVideoURL:videoURL withVideoUID:message.videoUID];
+         
+         [self uploadImage:snapshotImage toStoragePath:messageVideoSnapshotsPath compressionQuality:0.3 complitionHandler:^(NSError * _Nullable error, NSString * _Nullable snapshotImageUID)
+         {
+             if(error)
+             {
+                 handler(error);
+                 return;
+             }
+             
+             message.imageUID = snapshotImageUID;
+             message.imageHeight = snapshotImage.size.height;
+             message.imageWidth = snapshotImage.size.width;
+             [self sendMessage:message complitionHandler:^(NSError * _Nonnull error)
+              {
+                  if(error)
+                  {
+                      NSLog(@"%@ :: %@", NSStringFromSelector(_cmd), error.userInfo[@"NSLocalizedDescription"]);
+                      handler(error);
+                      return;
+                  }
+                  
+                  handler(nil);
+                  return;
+              }];
+         }];
+     }];
+}
+
+- (void)saveLocalVideoURL:(NSURL *)videoURL withVideoUID:(NSString *)videoUID
+{
+    NSURL *fileURL = [[[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject] URLByAppendingPathComponent:videoUID];
+    
+    NSData *videoData = [NSData dataWithContentsOfURL:videoURL];
+    [videoData writeToURL:fileURL atomically:YES];
+}
+
+- (UIImage *)snapshotVideoForFileURL:(NSURL *)videoURL
+{
+    AVAsset *asset = [AVAsset assetWithURL:videoURL];
+    AVAssetImageGenerator *imageGenerator = [AVAssetImageGenerator assetImageGeneratorWithAsset:asset];
+    
+    NSError *error;
+    CGImageRef snapshotCGImage = [imageGenerator copyCGImageAtTime:(CMTimeMake(1, 60)) actualTime:nil error:&error];
+    
+    if(error)
+    {
+        return nil;
+    }
+    else
+    {
+        return [UIImage imageWithCGImage:snapshotCGImage];
+    }
+}
+
+- (void)uploadImage:(UIImage *)uploadingImage toStoragePath:(NSString *)storagePath compressionQuality:(CGFloat)compressionQuality complitionHandler:(void(^)(NSError * _Nullable error, NSString * _Nullable imageUID))handler
+{
+    if(!uploadingImage || !storagePath)
+    {
+        return;
+    }
+    
+    NSData *imageData = UIImageJPEGRepresentation(uploadingImage, compressionQuality);
+    NSString *imageUID = [NSUUID UUID].UUIDString;
+    
+    FIRStorageReference *storageRef = [[[FIRStorage storage].reference child:storagePath] child:imageUID];
+    if (!storageRef)
+    {
+        NSLog(@"%@ :: %@", NSStringFromSelector(_cmd), @"FIRStorageReference is nil");
+        NSError *error = [NSError errorWithDomain:NSStringFromSelector(_cmd)
+                                             code:0
+                                         userInfo:@{NSLocalizedDescriptionKey : @"FIRStorageReference is nil"}];
+        handler(error, nil);
+        return;
+    }
+    
+    [storageRef putData:imageData metadata:nil completion:^(FIRStorageMetadata * _Nullable metadata, NSError * _Nullable error)
+     {
+         if(error)
+         {
+             NSLog(@"%@ :: %@", NSStringFromSelector(_cmd), error.userInfo[@"NSLocalizedDescription"]);
+             handler(error, nil);
+             return;
+         }
+         
+         if(!metadata || !metadata.path)
+         {
+             NSLog(@"%@ :: %@", NSStringFromSelector(_cmd), @"metadata(.path) is nil");
+             NSError *error = [NSError errorWithDomain:NSStringFromSelector(_cmd)
+                                                  code:0
+                                              userInfo:@{NSLocalizedDescriptionKey : @"metadata(.path) is nil"}];
+             handler(error, nil);
+             return;
+         }
+         
+         NSString *metadataImageUID = [metadata.path lastPathComponent];
+         [self saveLocalImageData:imageData withImageName:metadataImageUID];
+         handler(nil, metadataImageUID);
+         return;
+     }];
+}
+
+- (void)loadImageWithMessage:(Message *)message complitionHandler:(void(^)(NSError * _Nullable error, UIImage * _Nullable image))handler
+{
+    if(!message || !message.imageUID)
+    {
+        return;
+    }
+    
+    UIImage *messageImage = [self loadLocalImageWithName:[message.imageUID lastPathComponent]];
+    if(messageImage)
+    {
+        handler(nil, messageImage);
+        return;
+    }
+    
+    FIRStorageReference *storageRef = [[[FIRStorage storage].reference child:messageImagesPath] child:message.imageUID];
+
+    [storageRef downloadURLWithCompletion:^(NSURL * _Nullable URL, NSError * _Nullable error)
+     {
+         if(error)
+         {
+             NSLog(@"%@ :: %@", NSStringFromSelector(_cmd), error.userInfo[@"NSLocalizedDescription"]);
+             handler(error, nil);
+             return;
+         }
+         
+         [[[NSURLSession sharedSession] dataTaskWithURL:URL completionHandler:^(NSData * _Nullable imageData, NSURLResponse * _Nullable response, NSError * _Nullable error)
+           {
+               if(error)
+               {
+                   NSLog(@"%@ :: %@", NSStringFromSelector(_cmd), error.userInfo[@"NSLocalizedDescription"]);
+                   handler(error, nil);
+                   return;
+               }
+               
+               if(imageData)
+               {
+                   [self saveLocalImageData:imageData withImageName:message.imageUID];
+                   handler(nil, [UIImage imageWithData:imageData]);
+                   return;
+               }
+               
+               handler(nil, nil);
+               return;
+           }] resume];
+     }];
+}
+
+- (void)loadVideoSnapshotWithMessage:(Message *)message complitionHandler:(void(^)(NSError * _Nullable error, UIImage * _Nullable image))handler
+{
+    if(!message || !message.imageUID)
+    {
+        return;
+    }
+    
+    UIImage *messageImage = [self loadLocalImageWithName:[message.imageUID lastPathComponent]];
+    if(messageImage)
+    {
+        handler(nil, messageImage);
+        return;
+    }
+    
+    FIRStorageReference *storageRef = [[[FIRStorage storage].reference child:messageVideoSnapshotsPath] child:message.imageUID];
+    [storageRef downloadURLWithCompletion:^(NSURL * _Nullable URL, NSError * _Nullable error)
+     {
+         if(error)
+         {
+             NSLog(@"%@ :: %@", NSStringFromSelector(_cmd), error.userInfo[@"NSLocalizedDescription"]);
+             handler(error, nil);
+             return;
+         }
+         
+         [[[NSURLSession sharedSession] dataTaskWithURL:URL completionHandler:^(NSData * _Nullable imageData, NSURLResponse * _Nullable response, NSError * _Nullable error)
+           {
+               if(error)
+               {
+                   NSLog(@"%@ :: %@", NSStringFromSelector(_cmd), error.userInfo[@"NSLocalizedDescription"]);
+                   handler(error, nil);
+                   return;
+               }
+               
+               if(imageData)
+               {
+                   [self saveLocalImageData:imageData withImageName:message.imageUID];
+                   handler(nil, [UIImage imageWithData:imageData]);
+                   return;
+               }
+               
+               handler(nil, nil);
+               return;
+           }] resume];
+     }];
+}
+
+- (void)saveLocalImageData:(NSData *)imageData withImageName:(NSString *)imageUID
+{
+    NSURL *fileURL = [[[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject] URLByAppendingPathComponent:imageUID];
+    
+    [imageData writeToURL:fileURL atomically:YES];
+}
+
+- (UIImage *)loadLocalImageWithName:(NSString *)imageUID
+{
+    NSURL *fileURL = [[[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject] URLByAppendingPathComponent:imageUID];
+    
+    if([[NSFileManager defaultManager] fileExistsAtPath:fileURL.path])
+    {
+        NSData *imageData = [NSData dataWithContentsOfURL:fileURL];
+        UIImage *image = [UIImage imageWithData:imageData];
+        return image;
+    }
+    else
+    {
+        return nil;
+    }
+}
+
+- (void)downloadProfileImageFromURL:(NSString *)imageURL complitionHandler:(void(^)(NSError *error, NSData *imageData))handler
 {
     if([imageURL isEqualToString:@""])
     {
@@ -365,40 +664,9 @@ static NSString *const kUserId = @"uid";
                return;
            }] resume];
      }];
-    
-    //    NSURL *documentsURLPath = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
-    //    NSURL *fileURLPath = [documentsURLPath URLByAppendingPathComponent:imageURL];
-    
-    
-    //    FIRStorageReference *storageRef = [[[FIRStorage storage].reference child:profileImagesPath] child:imageURL];
-    //    if (storageRef)
-    //    {
-    //        [storageRef writeToFile:fileURLPath completion:^(NSURL * _Nullable URL, NSError * _Nullable error)
-    //        {
-    //            if(error)
-    //            {
-    //                NSLog(@"%@ :: %@", NSStringFromSelector(_cmd), error.userInfo[@"NSLocalizedDescription"]);
-    //                handler(error, nil);
-    //                return;
-    //            }
-    //
-    //            NSData *imageData = [NSData dataWithContentsOfURL:fileURLPath];
-    //            handler(nil, imageData);
-    //            return;
-    //        }];
-    //    }
-    //    else
-    //    {
-    //        NSLog(@"%@ :: %@", NSStringFromSelector(_cmd), @"FIRStorageReference is nil");
-    //        NSError *error = [NSError errorWithDomain:NSStringFromSelector(_cmd)
-    //                                             code:0
-    //                                         userInfo:@{NSLocalizedDescriptionKey : @"FIRStorageReference is nil"}];
-    //        handler(error, nil);
-    //        return;
-    //    }
 }
 
-- (void)sendMessage:(Message *)message withComplitionHandler:(void(^)(NSError *error))handler
+- (void)sendTextMessage:(Message *)message withComplitionHandler:(void(^)(NSError *error))handler
 {
     if(!message.messageText || !message.senderUserId || !message.receiverUserId)
     {
@@ -412,10 +680,16 @@ static NSString *const kUserId = @"uid";
         return;
     }
     
+    [self sendMessage:(Message *)message complitionHandler:(void(^)(NSError *error))handler];
+}
+
+- (void)sendMessage:(Message *)message complitionHandler:(void(^)(NSError *error))handler
+{
     if([message.receiverUserId isEqualToString:message.senderUserId])
     {
         FIRDatabaseReference *messageSenderRef = [[[[[_databaseRef child:usersPath] child:message.senderUserId] child:chatsPath] child:message.receiverUserId] childByAutoId];
         
+        // update Sender=Receiver chat
         [messageSenderRef updateChildValues:[message dictionaryRepresentation] withCompletionBlock:^(NSError * _Nullable error, FIRDatabaseReference * _Nonnull ref)
          {
              if(error)
@@ -431,6 +705,7 @@ static NSString *const kUserId = @"uid";
     }
     else
     {
+        // update Sender chat
         dispatch_async(dispatch_get_main_queue(),^{
             FIRDatabaseReference *messageSenderRef = [[[[[self->_databaseRef child:usersPath] child:message.senderUserId] child:chatsPath] child:message.receiverUserId] childByAutoId];
             [messageSenderRef updateChildValues:[message dictionaryRepresentation] withCompletionBlock:^(NSError * _Nullable error, FIRDatabaseReference * _Nonnull ref)
@@ -447,6 +722,7 @@ static NSString *const kUserId = @"uid";
              }];
         });
         
+        // update Receiver chat
         dispatch_async(dispatch_get_main_queue(), ^{
             FIRDatabaseReference *messageReceiverRef = [[[[[self->_databaseRef child:usersPath] child:message.receiverUserId] child:chatsPath] child:message.senderUserId] childByAutoId];
             [messageReceiverRef updateChildValues:[message dictionaryRepresentation] withCompletionBlock:^(NSError * _Nullable error, FIRDatabaseReference * _Nonnull ref)
@@ -465,7 +741,6 @@ static NSString *const kUserId = @"uid";
     }
 }
 
-
 // realize Firebase query, that observes only last users messages
 - (void)observeChatsForUserId:(NSString *)userId withComplitionHandler:(void(^)(NSArray *messages))handler
 {
@@ -482,10 +757,7 @@ static NSString *const kUserId = @"uid";
          NSMutableArray *messagesArray = [NSMutableArray array];
          for(FIRDataSnapshot *snap in [[snapshot children] allObjects])
          {
-             Message *message = [[Message alloc] initWithSenderUserId:snap.value[kMessageSenderUserId]
-                                                       receiverUserId:snap.value[kMessageReceiverUserId]
-                                                          messageText:snap.value[kMessageText]
-                                                            timestamp:snap.value[kMessageTimestamp]];
+             Message *message = [[Message alloc] initWithDictionaryRepresentation:snap.value];
              [messagesArray addObject:message];
          }
          
@@ -520,10 +792,7 @@ static NSString *const kUserId = @"uid";
          NSMutableArray *messagesArray = [NSMutableArray array];
          for(FIRDataSnapshot *snap in [[snapshot children] allObjects])
          {
-             Message *message = [[Message alloc] initWithSenderUserId:snap.value[kMessageSenderUserId]
-                                                       receiverUserId:snap.value[kMessageReceiverUserId]
-                                                          messageText:snap.value[kMessageText]
-                                                            timestamp:snap.value[kMessageTimestamp]];
+             Message *message = [[Message alloc] initWithDictionaryRepresentation:snap.value];
              [messagesArray addObject:message];
          }
          

@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+@import UIKit;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -29,11 +30,26 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)signOutHandler:(void(^)(NSError *error))handler;
 - (void)fetchCurrentUserWithHandler:(void(^)(User *user))handler;
 - (void)fetchContactsWithHandler:(void(^)(NSArray *users))handler;
-- (void)uploadImage:(NSData *)imageData complitionHandler:(void(^)(NSError *error, NSString *imageURLString))handler;
+
+- (void)sendTextMessage:(Message *)message withComplitionHandler:(void(^)(NSError *error))handler;
+
+- (void)sendMessage:(Message *)message
+          withImage:(UIImage *)uploadingImage
+ compressionQuality:(CGFloat)compressionQuality
+  complitionHandler:(void(^)(NSError *error))handler;
+
+- (void)sendMessage:(Message *)message
+       withVideoURL:(NSURL*)videoURL
+  complitionHandler:(void(^)(NSError *error))handler;
+
+- (void)loadImageWithMessage:(Message *)message complitionHandler:(void(^)(NSError * _Nullable error, UIImage * _Nullable image))handler;
+
+- (void)loadVideoSnapshotWithMessage:(Message *)message complitionHandler:(void(^)(NSError * _Nullable error, UIImage * _Nullable image))handler;
+
 - (void)removeContactsObservers;
-- (void)getProfileImageFromURL:(NSString *)imageURL complitionHandler:(void(^)(NSError *error, NSData *imageData))handler;
+- (void)downloadProfileImageFromURL:(NSString *)imageURL complitionHandler:(void(^)(NSError *error, NSData *imageData))handler;
 - (nullable NSString *)getCurrentUserId;
-- (void)sendMessage:(Message *)message withComplitionHandler:(void(^)(NSError *error))handler;
+
 - (void)observeChatsForUserId:(NSString *)userId withComplitionHandler:(void(^)(NSArray *messages))handler;
 - (void)removeChatsObservingForUserId:(NSString *)userId;
 - (void)observeChatForUserId:(NSString *)userId withContactUserId:(NSString *)contactUserId WithComplitionHandler:(void(^)(NSArray *messages))handler;

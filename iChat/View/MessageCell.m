@@ -12,6 +12,8 @@
 
 @property (weak, nonatomic) IBOutlet UITextView *messageTextView;
 @property (weak, nonatomic) IBOutlet UIView *bubbleView;
+@property (weak, nonatomic) IBOutlet UIImageView *messageImageView;
+@property (weak, nonatomic) IBOutlet UIButton *playButton;
 
 @end
 
@@ -29,12 +31,11 @@
     _blueBubbleColor = [UIColor colorWithRed:50.0/255.0 green:187.0/255.0 blue:186.0/255.0 alpha:1];
     _greyBubbleColor = [UIColor colorWithRed:59.0/255.0 green:74.0/255.0 blue:104.0/255.0 alpha:1];
     
-    self.messageTextView.backgroundColor = [UIColor clearColor];
-    self.messageTextView.textColor = [UIColor whiteColor];
-    self.messageTextView.font = [UIFont systemFontOfSize:16];
     self.bubbleView.backgroundColor = _blueBubbleColor;
     self.bubbleView.layer.cornerRadius = 5;
     self.bubbleView.layer.masksToBounds = true;
+    self.messageImageView.layer.cornerRadius = 5;
+    self.messageImageView.layer.masksToBounds = true;
     
     self.bubbleView.translatesAutoresizingMaskIntoConstraints = false;
     [self.bubbleView.topAnchor constraintEqualToAnchor:self.topAnchor].active = true;
@@ -50,11 +51,47 @@
     self.bubbleRightAnchor = [self.bubbleView.rightAnchor constraintEqualToAnchor:self.rightAnchor constant:-8];
     self.bubbleWidthAnchor = [self.bubbleView.widthAnchor constraintEqualToConstant:20];
     self.bubbleWidthAnchor.active = true;
+    
+    UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleImageViewTapRecognizer:)];
+    [self.messageImageView addGestureRecognizer:tapRecognizer];
+}
+
+- (IBAction)handlePlayButtonTap:(id)sender
+{
+    NSLog(@"play button tapped");
+}
+
+- (void)handleImageViewTapRecognizer:(UITapGestureRecognizer *)tapRecognizer
+{
+    if(self.delegate && [self.delegate respondsToSelector:@selector(performZoomImageView:)])
+    {
+        [self.delegate performZoomImageView:self.messageImageView];
+    }
 }
 
 - (void)setBubbleBackgroundColor:(UIColor *)color
 {
     self.bubbleView.backgroundColor = color;
+}
+
+- (void)setHiddenImageView:(BOOL)hidden
+{
+    self.messageImageView.hidden = hidden;
+}
+
+- (void)setHiddenTextView:(BOOL)hidden
+{
+    self.messageTextView.hidden = hidden;
+}
+
+- (void)setImageForMessageImageView:(UIImage *)image
+{
+    self.messageImageView.image = image;
+}
+
+- (void)setHiddenPlayButton:(BOOL)hidden
+{
+    self.playButton.hidden = hidden;
 }
 
 @end
