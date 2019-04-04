@@ -7,21 +7,20 @@
 //
 
 #import <UIKit/UIKit.h>
+@import AVFoundation;
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol MessageCellDelegate <NSObject>
-
-- (void)performZoomImageView:(UIImageView *)imageView;
-
-@end
+@protocol MessageCellDelegate;
 
 @interface MessageCell : UICollectionViewCell
 
 @property (nonatomic, weak) id <MessageCellDelegate> delegate;
+@property (nonatomic, strong, nullable) NSString *videoUID;
 
 - (void)setMessageText:(NSString *)text;
 - (void)setBubbleBackgroundColor:(UIColor *)color;
+- (void)setupPlayerLayer:(AVPlayerLayer *)playerLayer;
 
 - (void)setHiddenPlayButton:(BOOL)hidden;
 - (void)setHiddenImageView:(BOOL)hidden;
@@ -33,5 +32,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+@protocol MessageCellDelegate <NSObject>
+
+- (void)performZoomImageView:(UIImageView *)imageView;
+- (void)performPlayVideoUID:(NSString *)videoUID forMessageCell:(MessageCell *)messageCell;
+
+@end
 
 NS_ASSUME_NONNULL_END

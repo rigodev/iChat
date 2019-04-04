@@ -14,22 +14,26 @@
 static NSString *const kLoginControllerID = @"LoginController";
 static NSString *const cellId = @"defaultCellId";
 
-@interface ChannelsController ()
+@interface ChannelsController () <UINavigationControllerDelegate,UIImagePickerControllerDelegate>
 {
     NSArray *_messages;
     NSString *_currentUserId;
+    User *_currentUser;
 }
 
 @end
 
 @implementation ChannelsController
+{
+    UIImageView *profileImageView;
+}
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
     _currentUserId = [[DataProvider sharedInstance] getCurrentUserId];
-    [self getUserName];
+    [self getCurrentUser];
 }
 
 - (UIStatusBarStyle)preferredStatusBarStyle
@@ -37,15 +41,112 @@ static NSString *const cellId = @"defaultCellId";
     return UIStatusBarStyleLightContent;
 }
 
-- (void)getUserName
+- (void)getCurrentUser
 {
     [[DataProvider sharedInstance] fetchCurrentUserWithHandler:^(User * _Nonnull user)
      {
          if(user)
          {
-             self.navigationItem.title = user.name;
+             self->_currentUser = user;
+             [self setupTitleViewForNavigationBar];
          }
      }];
+}
+
+- (void)setupTitleViewForNavigationBar
+{
+    UIView *titleView = [UIView new];
+    UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleProfileTap)];
+    [titleView addGestureRecognizer:tapGesture];
+    
+    profileImageView = [UIImageView new];
+    [titleView addSubview:profileImageView];
+    profileImageView.translatesAutoresizingMaskIntoConstraints = false;
+    [profileImageView.leftAnchor constraintEqualToAnchor:titleView.leftAnchor].active = true;
+    [profileImageView.topAnchor constraintEqualToAnchor:titleView.topAnchor];
+    [profileImageView.heightAnchor constraintEqualToAnchor:titleView.heightAnchor constant:-4.0].active = true;
+    [profileImageView.widthAnchor constraintEqualToAnchor:titleView.heightAnchor constant:-4.0].active = true;
+    
+    profileImageView.layer.cornerRadius = 15;
+    profileImageView.clipsToBounds = true;
+    profileImageView.contentMode = UIViewContentModeScaleAspectFill;
+    if(_currentUser && ![_currentUser.uid isEqualToString:@""])
+    {
+        if([_currentUser.profileURL isEqualToString:@""])
+        {
+            profileImageView.image = [UIImage imageNamed:@"default-logo"];
+        }
+        else
+        {
+            [[DataProvider sharedInstance] loadProfileImageFromURL:_currentUser.profileURL complitionHandler:^(NSError * _Nonnull error, NSData * _Nonnull imageData)
+             {
+                 if(!error && imageData)
+                 {
+                     dispatch_async(dispatch_get_main_queue(), ^
+                                    {
+                                        self->profileImageView.image = [UIImage imageWithData:imageData];
+                                    });
+                 }
+             }];
+        }
+    }
+    
+    UILabel *nameLabel = [UILabel new];
+    [titleView addSubview:nameLabel];
+    nameLabel.translatesAutoresizingMaskIntoConstraints = false;
+    [nameLabel.leftAnchor constraintEqualToAnchor:profileImageView.rightAnchor constant:5].active = true;
+    [nameLabel.rightAnchor constraintEqualToAnchor:titleView.rightAnchor].active = true;
+    [nameLabel.heightAnchor constraintEqualToAnchor:profileImageView.heightAnchor].active = true;
+    [nameLabel.centerYAnchor constraintEqualToAnchor:profileImageView.centerYAnchor].active = true;
+    nameLabel.textColor = [UIColor whiteColor];
+    if(_currentUser)
+    {
+        nameLabel.text = _currentUser.name;
+    }
+    
+    self.navigationItem.titleView = titleView;
+}
+
+- (void)handleProfileTap
+{
+    UIImagePickerController *imagePicker = [UIImagePickerController new];
+    
+    imagePicker.delegate = self;
+    imagePicker.allowsEditing = true;
+    
+    [self presentViewController:imagePicker animated:YES completion:nil];
+}
+
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<UIImagePickerControllerInfoKey, id> *)info
+{
+    UIImage *selectedImage;
+    if(info[UIImagePickerControllerEditedImage])
+    {
+        selectedImage = info[UIImagePickerControllerEditedImage];
+    }
+    else
+    {
+        selectedImage = info[UIImagePickerControllerOriginalImage];
+    }
+    
+    [[DataProvider sharedInstance] uploadProfileImage:selectedImage forUser:_currentUser compressionQuality:0.1 complitionHandler:^(NSError * _Nonnull error, UIImage * _Nonnull uploadedImage)
+    {
+        if(!error && uploadedImage)
+        {
+            dispatch_async(dispatch_get_main_queue(), ^
+                           {
+                               self->profileImageView.image = uploadedImage;
+                           });
+        }
+    }];
+    
+    [picker dismissViewControllerAnimated:YES completion:nil];
+}
+
+
+- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
+{
+    [picker dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -82,15 +183,31 @@ static NSString *const cellId = @"defaultCellId";
 
 - (IBAction)logoutTapHandle:(id)sender
 {
-    [[DataProvider sharedInstance] signOutHandler:^(NSError * _Nonnull error)
-     {
-         if(error)
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Выход из учетной записи"
+                                                                   message:@"Вы действительно хотите выйти из текущей учетной записи ?"
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    
+    UIAlertAction *yesAction = [UIAlertAction actionWithTitle:@"Да" style:UIAlertActionStyleDefault
+                                                          handler:^(UIAlertAction * action)
+    {
+        [[DataProvider sharedInstance] signOutHandler:^(NSError * _Nonnull error)
          {
-             return;
-         }
-         
-         [self.navigationController popToRootViewControllerAnimated:YES];
-     }];
+             if(error)
+             {
+                 return;
+             }
+             
+             [self.navigationController popToRootViewControllerAnimated:YES];
+         }];
+    }];
+    
+    UIAlertAction *notAction = [UIAlertAction actionWithTitle:@"Нет" style:UIAlertActionStyleDefault
+                                                          handler:^(UIAlertAction * action) {}];
+    
+    [alert addAction:yesAction];
+    [alert addAction:notAction];
+    
+    [self presentViewController:alert animated:YES completion:nil];
 }
 
 #pragma mark - Table view data source

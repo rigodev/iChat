@@ -87,9 +87,9 @@ static NSString *const chatControllerId = @"ChatController";
     [cell setNameText:userContact.name];
 //    [cell configureCellWithAvatarImage:nil];
     
-    [[DataProvider sharedInstance] downloadProfileImageFromURL:userContact.profileURL complitionHandler:^(NSError * _Nonnull error, NSData * _Nonnull imageData)
+    [[DataProvider sharedInstance] loadProfileImageFromURL:userContact.profileURL complitionHandler:^(NSError * _Nonnull error, NSData * _Nonnull imageData)
      {
-         if(error == nil)
+         if(!error && imageData)
          {
              dispatch_async(dispatch_get_main_queue(), ^
                             {

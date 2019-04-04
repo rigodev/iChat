@@ -329,13 +329,13 @@
                     </tableView>
                     <navigationItem key="navigationItem" id="CmH-4E-vgH">
                         <nil key="title"/>
-                        <barButtonItem key="leftBarButtonItem" title="Logout" id="1Wi-fd-uos">
+                        <barButtonItem key="leftBarButtonItem" title="Выйти" image="logout" id="1Wi-fd-uos">
                             <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <connections>
                                 <action selector="logoutTapHandle:" destination="Gew-am-DS4" id="PVC-Pl-PKv"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" style="plain" systemItem="bookmarks" id="oaI-4K-APT">
+                        <barButtonItem key="rightBarButtonItem" image="contacts" style="plain" id="oaI-4K-APT">
                             <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <connections>
                                 <segue destination="eKV-7U-cEh" kind="show" identifier="Channels2Contacts" id="YQb-PH-RZY"/>
@@ -425,6 +425,66 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="QUK-g5-6hg" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2609" y="36"/>
+        </scene>
+        <!--Table View Controller-->
+        <scene sceneID="tnt-Sl-SeC">
+            <objects>
+                <tableViewController id="dQF-9u-TPL" customClass="TableViewController" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="SIW-Fb-4A7">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="i5f-j7-crv">
+                                <rect key="frame" x="0.0" y="28" width="375" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="i5f-j7-crv" id="49n-TI-O3j">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="dQF-9u-TPL" id="VBZ-7f-JVq"/>
+                            <outlet property="delegate" destination="dQF-9u-TPL" id="XdC-FR-b9L"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" id="kdM-Bm-Yqn">
+                        <nil key="title"/>
+                        <barButtonItem key="leftBarButtonItem" title="exit" id="pde-Rd-ruq">
+                            <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" title="Contacts" id="YK6-e3-Zuk">
+                            <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="leftNavBarItem" destination="pde-Rd-ruq" id="zP8-xU-UTb"/>
+                    </connections>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="IcZ-EA-ul7" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="4533.6000000000004" y="155.17241379310346"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="jzI-iQ-YJX">
+            <objects>
+                <navigationController id="FsY-m2-nVc" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="8zW-ej-H8N">
+                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <color key="barTintColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <textAttributes key="titleTextAttributes">
+                            <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        </textAttributes>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="dQF-9u-TPL" kind="relationship" relationship="rootViewController" id="As6-8t-Ael"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="TPZ-Cp-6KR" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3582" y="156"/>
         </scene>
         <!--Чат-->
         <scene sceneID="LQ8-Uz-PTr">
@@ -519,9 +579,14 @@
                                                                 <action selector="handlePlayButtonTap:" destination="qF3-9q-Syh" eventType="touchUpInside" id="3E1-uA-6Rj"/>
                                                             </connections>
                                                         </button>
+                                                        <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" ambiguous="YES" hidesWhenStopped="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="GGP-Rn-ueH">
+                                                            <rect key="frame" x="7" y="7" width="37" height="37"/>
+                                                        </activityIndicatorView>
                                                     </subviews>
                                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <constraints>
+                                                        <constraint firstItem="GGP-Rn-ueH" firstAttribute="centerX" secondItem="QXV-HK-QQf" secondAttribute="centerX" id="93A-LA-GI9"/>
+                                                        <constraint firstItem="GGP-Rn-ueH" firstAttribute="centerY" secondItem="QXV-HK-QQf" secondAttribute="centerY" id="M62-D5-ytS"/>
                                                         <constraint firstItem="ISn-jZ-ZXx" firstAttribute="top" secondItem="QXV-HK-QQf" secondAttribute="top" id="QQn-vB-XFZ"/>
                                                         <constraint firstItem="2mo-Jh-PTn" firstAttribute="centerX" secondItem="QXV-HK-QQf" secondAttribute="centerX" id="SLs-sC-DPE"/>
                                                         <constraint firstAttribute="bottom" secondItem="ISn-jZ-ZXx" secondAttribute="bottom" id="b32-v1-bSb"/>
@@ -541,6 +606,7 @@
                                         </view>
                                         <connections>
                                             <outlet property="bubbleView" destination="QXV-HK-QQf" id="12k-1N-oBw"/>
+                                            <outlet property="loadingSpinner" destination="GGP-Rn-ueH" id="tLC-PR-vLV"/>
                                             <outlet property="messageImageView" destination="ISn-jZ-ZXx" id="nmA-R2-W5L"/>
                                             <outlet property="messageTextView" destination="Txc-tJ-lf5" id="aHm-1j-mkX"/>
                                             <outlet property="playButton" destination="2mo-Jh-PTn" id="xXH-TM-Yu6"/>
@@ -588,15 +654,17 @@
         <image name="back" width="24" height="24"/>
         <image name="clouds" width="192" height="192"/>
         <image name="clouds-blue" width="192" height="192"/>
+        <image name="contacts" width="25.600000381469727" height="25.600000381469727"/>
         <image name="email" width="24" height="24"/>
         <image name="image-choose" width="48" height="48"/>
         <image name="left-arrow" width="24" height="24"/>
+        <image name="logout" width="25.600000381469727" height="25.600000381469727"/>
         <image name="password" width="24" height="24"/>
         <image name="play-button" width="24" height="24"/>
         <image name="send-button" width="24" height="24"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="HKY-1r-wKF"/>
+        <segue reference="nUA-vd-ezy"/>
         <segue reference="e3Q-J4-f9o"/>
     </inferredMetricsTieBreakers>
 </document>

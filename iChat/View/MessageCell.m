@@ -14,10 +14,14 @@
 @property (weak, nonatomic) IBOutlet UIView *bubbleView;
 @property (weak, nonatomic) IBOutlet UIImageView *messageImageView;
 @property (weak, nonatomic) IBOutlet UIButton *playButton;
+@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *loadingSpinner;
 
 @end
 
 @implementation MessageCell
+{
+    AVPlayerLayer *_playerLayer;
+}
 
 - (void)setMessageText:(NSString *)text
 {
@@ -58,11 +62,44 @@
 
 - (IBAction)handlePlayButtonTap:(id)sender
 {
-    NSLog(@"play button tapped");
+    if(self.delegate && [self.delegate respondsToSelector:@selector(performPlayVideoUID:forMessageCell:)])
+    {
+        [self.loadingSpinner startAnimating];
+        self.playButton.hidden = true;
+        
+        [self.delegate performPlayVideoUID:self.videoUID forMessageCell:self];
+    }
+}
+
+- (void)setupPlayerLayer:(AVPlayerLayer *)playerLayer;
+{
+    _playerLayer = playerLayer;
+    _playerLayer.frame = self.bubbleView.bounds;
+    [self.bubbleView.layer addSublayer:_playerLayer];
+}
+
+- (void)prepareForReuse
+{
+    [super prepareForReuse];
+    
+    self.videoUID = nil;
+    
+    if(_playerLayer)
+    {
+        [_playerLayer removeFromSuperlayer];
+        [_playerLayer.player pause];
+    }
+    
+    [self.loadingSpinner stopAnimating];
 }
 
 - (void)handleImageViewTapRecognizer:(UITapGestureRecognizer *)tapRecognizer
 {
+    if(self.videoUID || [self.videoUID isEqualToString:@""])
+    {
+        return;
+    }
+    
     if(self.delegate && [self.delegate respondsToSelector:@selector(performZoomImageView:)])
     {
         [self.delegate performZoomImageView:self.messageImageView];

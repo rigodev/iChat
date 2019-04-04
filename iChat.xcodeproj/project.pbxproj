@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0F3919912254C5480024139B /* TableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0F3919902254C5480024139B /* TableViewController.m */; };
 		0F3F05FC2244220B0040EA52 /* UserCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 0F3F05FB2244220B0040EA52 /* UserCell.m */; };
 		0F4A1BD72240E49B00D3AE03 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 0F4A1BD62240E49B00D3AE03 /* AppDelegate.m */; };
 		0F4A1BDD2240E49B00D3AE03 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0F4A1BDB2240E49B00D3AE03 /* Main.storyboard */; };
@@ -28,6 +29,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0F39198F2254C5480024139B /* TableViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TableViewController.h; sourceTree = "<group>"; };
+		0F3919902254C5480024139B /* TableViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TableViewController.m; sourceTree = "<group>"; };
 		0F3F05FA2244220B0040EA52 /* UserCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UserCell.h; sourceTree = "<group>"; };
 		0F3F05FB2244220B0040EA52 /* UserCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UserCell.m; sourceTree = "<group>"; };
 		0F4A1BD22240E49B00D3AE03 /* iChat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iChat.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -109,6 +112,8 @@
 				0F4A1C022242339E00D3AE03 /* GoogleService-Info.plist */,
 				0F4A1BE32240E49C00D3AE03 /* Info.plist */,
 				0F4A1BE42240E49C00D3AE03 /* main.m */,
+				0F39198F2254C5480024139B /* TableViewController.h */,
+				0F3919902254C5480024139B /* TableViewController.m */,
 			);
 			path = iChat;
 			sourceTree = "<group>";
@@ -324,6 +329,7 @@
 				0F3F05FC2244220B0040EA52 /* UserCell.m in Sources */,
 				0F4A1C152242BF2B00D3AE03 /* RegistrationController.m in Sources */,
 				0FD718C72247D24F0097363A /* Message.m in Sources */,
+				0F3919912254C5480024139B /* TableViewController.m in Sources */,
 				0FD718C4224760540097363A /* UINavigationController+leap.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

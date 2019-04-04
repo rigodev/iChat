@@ -28,7 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)currentUserAuthorizedHandler:(void(^)(BOOL authorized, NSError *error))handler;
 - (void)signOutHandler:(void(^)(NSError *error))handler;
-- (void)fetchCurrentUserWithHandler:(void(^)(User *user))handler;
+- (void)fetchCurrentUserWithHandler:(void(^)(User * _Nullable user))handler;
 - (void)fetchContactsWithHandler:(void(^)(NSArray *users))handler;
 
 - (void)sendTextMessage:(Message *)message withComplitionHandler:(void(^)(NSError *error))handler;
@@ -46,11 +46,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)loadVideoSnapshotWithMessage:(Message *)message complitionHandler:(void(^)(NSError * _Nullable error, UIImage * _Nullable image))handler;
 
-- (void)removeContactsObservers;
-- (void)downloadProfileImageFromURL:(NSString *)imageURL complitionHandler:(void(^)(NSError *error, NSData *imageData))handler;
+- (void)loadProfileImageFromURL:(NSString *)imageURL complitionHandler:(void(^)(NSError *error, NSData *imageData))handler;
+- (void)uploadProfileImage:(UIImage *)profileImage forUser:(User *)user compressionQuality:(CGFloat)compressionQuality complitionHandler:(void(^)(NSError *error, UIImage *uploadedImage))handler;
+
 - (nullable NSString *)getCurrentUserId;
 
+- (void)fetchURLForVideoUID:(NSString *)videoUID complitionHandler:(void(^)(NSError *error, NSURL *fileURL))handler;
+
 - (void)observeChatsForUserId:(NSString *)userId withComplitionHandler:(void(^)(NSArray *messages))handler;
+- (void)removeContactsObservers;
 - (void)removeChatsObservingForUserId:(NSString *)userId;
 - (void)observeChatForUserId:(NSString *)userId withContactUserId:(NSString *)contactUserId WithComplitionHandler:(void(^)(NSArray *messages))handler;
 - (void)removeChatObservingForUserId:(NSString *)userId withContactUserId:(NSString *)contactUserId;

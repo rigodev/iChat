@@ -46,28 +46,6 @@ static NSString *const kSegueRegistrationChannelsID = @"Registration2Channels";
     self.createBtn.layer.masksToBounds = true;
 }
 
-//example of compression: NSData *imgData4 = UIImageJPEGRepresentation(newImage, 0.0f);
-//- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<UIImagePickerControllerInfoKey, id> *)info
-//{
-//    UIImage *selectedImage;
-//
-//    if(info[UIImagePickerControllerEditedImage])
-//    {
-//        selectedImage = info[UIImagePickerControllerEditedImage];
-//    }
-//    else if(info[UIImagePickerControllerOriginalImage])
-//    {
-//        selectedImage = info[UIImagePickerControllerOriginalImage];
-//    }
-//
-//    if(selectedImage)
-//    {
-//        self.profileImageView.image = selectedImage;
-//    }
-//
-//    [picker dismissViewControllerAnimated:YES completion:nil];
-//}
-
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];

@@ -13,6 +13,7 @@
 #import "UINavigationController+leap.h"
 #import "MessageCell.h"
 @import MobileCoreServices;
+@import AVFoundation;
 
 static NSString *const cellId = @"cellId";
 static const CGFloat imageWidthStretchRatio = 0.7;
@@ -48,6 +49,7 @@ static const CGFloat textWidthStretchRatio = 0.6;
     _currentUserId = [[DataProvider sharedInstance] getCurrentUserId];
     [self setupChatViews];
     [self setupKeyboardObservers];
+    [self setupTitleViewForNavigationBar];
 }
 
 - (void)setupChatViews
@@ -57,6 +59,51 @@ static const CGFloat textWidthStretchRatio = 0.6;
     self.messageField.delegate = self;
     //    self.chatCollectionView.keyboardDismissMode = UIScrollViewKeyboardDismissModeInteractive;
     sendContainerBottomAnchor = [self.sendContainerView.bottomAnchor constraintEqualToAnchor:self.view.bottomAnchor];
+}
+
+- (void)setupTitleViewForNavigationBar
+{
+    UIView *titleView = [UIView new];
+    
+    UIImageView *profileImageView = [UIImageView new];
+    [titleView addSubview:profileImageView];
+    profileImageView.translatesAutoresizingMaskIntoConstraints = false;
+    [profileImageView.leftAnchor constraintEqualToAnchor:titleView.leftAnchor].active = true;
+    [profileImageView.topAnchor constraintEqualToAnchor:titleView.topAnchor];
+    [profileImageView.heightAnchor constraintEqualToAnchor:titleView.heightAnchor constant:-4.0].active = true;
+    [profileImageView.widthAnchor constraintEqualToAnchor:titleView.heightAnchor constant:-4.0].active = true;
+    
+    profileImageView.layer.cornerRadius = 20;
+    profileImageView.clipsToBounds = true;
+    profileImageView.contentMode = UIViewContentModeScaleAspectFill;
+    if(_receiverUser && ![_receiverUser.uid isEqualToString:@""])
+    {
+        [[DataProvider sharedInstance] loadProfileImageFromURL:_receiverUser.profileURL complitionHandler:^(NSError * _Nonnull error, NSData * _Nonnull imageData)
+         {
+             if(!error && imageData)
+             {
+                 dispatch_async(dispatch_get_main_queue(), ^
+                                {
+                                    profileImageView.image = [UIImage imageWithData:imageData];
+                                });
+             }
+         }];
+    }
+    
+    UILabel *nameLabel = [UILabel new];
+    [titleView addSubview:nameLabel];
+    nameLabel.translatesAutoresizingMaskIntoConstraints = false;
+    [nameLabel.leftAnchor constraintEqualToAnchor:profileImageView.rightAnchor constant:5].active = true;
+    [nameLabel.rightAnchor constraintEqualToAnchor:titleView.rightAnchor].active = true;
+    [nameLabel.heightAnchor constraintEqualToAnchor:profileImageView.heightAnchor].active = true;
+    [nameLabel.centerYAnchor constraintEqualToAnchor:profileImageView.centerYAnchor].active = true;
+    nameLabel.textColor = [UIColor whiteColor];
+    if(_receiverUser)
+    {
+        nameLabel.text = _receiverUser.name;
+    }
+    
+    self.navigationItem.titleView = titleView;
 }
 
 - (void)setupKeyboardObservers
@@ -92,7 +139,8 @@ static const CGFloat textWidthStretchRatio = 0.6;
 }
 
 - (void)handleKeyboardWillShow:(NSNotification *)notification
-{CGRect keyboardFrame = [notification.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
+{
+    CGRect keyboardFrame = [notification.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
     sendContainerBottomAnchor.constant = -keyboardFrame.size.height;
     sendContainerBottomAnchor.active = true;
     
@@ -142,42 +190,6 @@ static const CGFloat textWidthStretchRatio = 0.6;
     }
     
     [picker dismissViewControllerAnimated:YES completion:nil];
-}
-
-- (void)performZoomImageView:(UIImageView *)imageView
-{
-    _startingImageView = imageView;
-    
-    UIWindow *keyWindow = [UIApplication sharedApplication].keyWindow;
-    UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleBackgroundViewTapRecognizer:)];
-    
-    _backgroundView = [UIView new];
-    _backgroundView.frame = keyWindow.frame;
-    _backgroundView.backgroundColor = [UIColor blackColor];
-    _backgroundView.alpha = 0;
-    [keyWindow addSubview:_backgroundView];
-    
-    _startingFrame = [imageView.superview convertRect:imageView.frame toView:nil];
-    UIImageView *zoomingImageView = [[UIImageView alloc] initWithFrame:_startingFrame];
-    zoomingImageView.image = imageView.image;
-    zoomingImageView.userInteractionEnabled = true;
-    [zoomingImageView addGestureRecognizer:tapRecognizer];
-    [keyWindow addSubview:zoomingImageView];
-    
-    self->_startingImageView.hidden = true;
-    [UIView animateWithDuration:0.5
-                          delay:0
-         usingSpringWithDamping:1
-          initialSpringVelocity:1
-                        options:UIViewAnimationOptionCurveEaseOut
-                     animations:^
-     {
-         self->_backgroundView.alpha = 1;
-         CGFloat zoomingHeight = self->_startingFrame.size.height / self->_startingFrame.size.width * keyWindow.frame.size.width;
-         zoomingImageView.frame = CGRectMake(0, 0, keyWindow.frame.size.width, zoomingHeight);
-         zoomingImageView.center = keyWindow.center;
-     }
-                     completion:nil];
 }
 
 - (void)handleBackgroundViewTapRecognizer:(UITapGestureRecognizer *)tapRecognizer
@@ -329,6 +341,61 @@ static const CGFloat textWidthStretchRatio = 0.6;
     _contactUserId = receiverUser.uid;
 }
 
+#pragma mark - MessageCell delegate
+
+- (void)performZoomImageView:(UIImageView *)imageView
+{
+    _startingImageView = imageView;
+    
+    UIWindow *keyWindow = [UIApplication sharedApplication].keyWindow;
+    UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleBackgroundViewTapRecognizer:)];
+    
+    _backgroundView = [UIView new];
+    _backgroundView.frame = keyWindow.frame;
+    _backgroundView.backgroundColor = [UIColor blackColor];
+    _backgroundView.alpha = 0;
+    [keyWindow addSubview:_backgroundView];
+    
+    _startingFrame = [imageView.superview convertRect:imageView.frame toView:nil];
+    UIImageView *zoomingImageView = [[UIImageView alloc] initWithFrame:_startingFrame];
+    zoomingImageView.image = imageView.image;
+    zoomingImageView.userInteractionEnabled = true;
+    [zoomingImageView addGestureRecognizer:tapRecognizer];
+    [keyWindow addSubview:zoomingImageView];
+    
+    self->_startingImageView.hidden = true;
+    [UIView animateWithDuration:0.5
+                          delay:0
+         usingSpringWithDamping:1
+          initialSpringVelocity:1
+                        options:UIViewAnimationOptionCurveEaseOut
+                     animations:^
+     {
+         self->_backgroundView.alpha = 1;
+         CGFloat zoomingHeight = self->_startingFrame.size.height / self->_startingFrame.size.width * keyWindow.frame.size.width;
+         zoomingImageView.frame = CGRectMake(0, 0, keyWindow.frame.size.width, zoomingHeight);
+         zoomingImageView.center = keyWindow.center;
+     }
+                     completion:nil];
+}
+
+- (void)performPlayVideoUID:(NSString *)videoUID forMessageCell:(MessageCell *)messageCell
+{
+    [[DataProvider sharedInstance] fetchURLForVideoUID:videoUID complitionHandler:^(NSError * _Nonnull error, NSURL * _Nonnull fileURL)
+     {
+         if(!fileURL)
+         {
+             return;
+         }
+         
+         AVPlayer *player = [AVPlayer playerWithURL:fileURL];
+         AVPlayerLayer *playerLayer = [AVPlayerLayer playerLayerWithPlayer:player];
+         [messageCell setupPlayerLayer:playerLayer];
+         
+         [player play];
+     }];
+}
+
 #pragma mark - CollectionView data source
 
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
@@ -420,6 +487,8 @@ static const CGFloat textWidthStretchRatio = 0.6;
     [cell setHiddenImageView:false];
     [cell setHiddenTextView:true];
     [cell setHiddenPlayButton:false];
+    
+    cell.videoUID = message.videoUID;
     
     [[DataProvider sharedInstance] loadVideoSnapshotWithMessage:message complitionHandler:^(NSError * _Nullable error, UIImage * _Nullable image)
      {
