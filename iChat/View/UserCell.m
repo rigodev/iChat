@@ -26,7 +26,7 @@
 
 - (void)configureCell
 {
-    self.avatarImageView.layer.cornerRadius = 20;
+    self.avatarImageView.layer.cornerRadius = 25;
     self.avatarImageView.layer.masksToBounds = true;
 }
 

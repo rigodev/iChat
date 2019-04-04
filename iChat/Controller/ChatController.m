@@ -57,7 +57,6 @@ static const CGFloat textWidthStretchRatio = 0.6;
     _initialScrollDone = NO;
     self.chatCollectionView.alwaysBounceVertical = true;
     self.messageField.delegate = self;
-    //    self.chatCollectionView.keyboardDismissMode = UIScrollViewKeyboardDismissModeInteractive;
     sendContainerBottomAnchor = [self.sendContainerView.bottomAnchor constraintEqualToAnchor:self.view.bottomAnchor];
 }
 
@@ -411,15 +410,9 @@ static const CGFloat textWidthStretchRatio = 0.6;
 - (__kindof UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     MessageCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:cellId forIndexPath:indexPath];
-    
     cell.delegate = self;
     
-    //    NSDateFormatter *dateFormatter = [NSDateFormatter new];
-    //    dateFormatter.dateFormat = @"HH:mm:ss";
-    //    cell.detailTextLabel.text = [dateFormatter stringFromDate:[NSDate dateWithTimeIntervalSince1970: message.timestamp.doubleValue/1000.0]];
-    
-    Message *message = _messages[indexPath.row];
-    
+    Message *message = _messages[indexPath.row];    
     switch (message.type)
     {
         case MessageTypeText:

@@ -43,13 +43,13 @@ NS_ASSUME_NONNULL_BEGIN
   complitionHandler:(void(^)(NSError *error))handler;
 
 - (void)loadImageWithMessage:(Message *)message complitionHandler:(void(^)(NSError * _Nullable error, UIImage * _Nullable image))handler;
-
 - (void)loadVideoSnapshotWithMessage:(Message *)message complitionHandler:(void(^)(NSError * _Nullable error, UIImage * _Nullable image))handler;
 
 - (void)loadProfileImageFromURL:(NSString *)imageURL complitionHandler:(void(^)(NSError *error, NSData *imageData))handler;
 - (void)uploadProfileImage:(UIImage *)profileImage forUser:(User *)user compressionQuality:(CGFloat)compressionQuality complitionHandler:(void(^)(NSError *error, UIImage *uploadedImage))handler;
 
 - (nullable NSString *)getCurrentUserId;
+- (void)fetchUserWithId:(NSString *)userId complitionHandler:(void(^)(User *user))handler;
 
 - (void)fetchURLForVideoUID:(NSString *)videoUID complitionHandler:(void(^)(NSError *error, NSURL *fileURL))handler;
 

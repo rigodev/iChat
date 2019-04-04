@@ -12,7 +12,7 @@
 
 static NSString *const kSegueRegistrationChannelsID = @"Registration2Channels";
 
-@interface RegistrationController ()
+@interface RegistrationController () <UITextFieldDelegate>
 
 @property (weak, nonatomic) IBOutlet UITextField *nameField;
 @property (weak, nonatomic) IBOutlet UITextField *emailField;
@@ -32,13 +32,16 @@ static NSString *const kSegueRegistrationChannelsID = @"Registration2Channels";
 }
 
 - (void)setupControls
-{   
+{
+    self.emailField.delegate = self;
     self.emailField.layer.cornerRadius = 15;
     self.emailField.layer.masksToBounds = true;
     
+    self.passwordField.delegate = self;
     self.passwordField.layer.cornerRadius = 15;
     self.passwordField.layer.masksToBounds = true;
     
+    self.nameField.delegate = self;
     self.nameField.layer.cornerRadius = 15;
     self.nameField.layer.masksToBounds = true;
     
@@ -60,6 +63,12 @@ static NSString *const kSegueRegistrationChannelsID = @"Registration2Channels";
 - (IBAction)cancelHandle:(id)sender
 {
     [self.navigationController popViewControllerAnimated:YES];
+}
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+    [textField resignFirstResponder];
+    return NO;
 }
 
 - (IBAction)signUpHandle:(id)sender

@@ -9,8 +9,10 @@
 #ifndef Constants_h
 #define Constants_h
 
-// internal key for current_user
+// internal keys
 static NSString *const kUserId = @"uid";
+static NSString *const kContactId = @"contactUID";
+static NSString *const kLastContactMessage = @"lastContactMessage";
 
 // FireBase paths from root
 static NSString *const usersPath = @"users";
@@ -21,7 +23,7 @@ static NSString *const kUserName = @"name";
 static NSString *const kUserEmail = @"email";
 static NSString *const kUserProfileImageURL = @"profileImageURL";
 
-// FireBase root/[messagesPath]/[messageId]/
+// FireBase root/[chatsPath]/[senderID]/[receiverID]/[messageId]/
 static NSString *const kMessageType = @"type";
 static NSString *const kMessageText = @"text";
 static NSString *const kMessageSenderUserId = @"senderUserId";

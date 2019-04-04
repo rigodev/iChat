@@ -8,11 +8,16 @@
 
 #import "ChannelsController.h"
 #import "DataProvider.h"
+#import "Constants.h"
 #import "User.h"
 #import "Message.h"
+#import "UserMessageCell.h"
+#import "ChatController.h"
 
 static NSString *const kLoginControllerID = @"LoginController";
-static NSString *const cellId = @"defaultCellId";
+static NSString *const kUser = @"user";
+static NSString *const chatControllerId = @"ChatController";
+static NSString *const cellId = @"userMessageCell";
 
 @interface ChannelsController () <UINavigationControllerDelegate,UIImagePickerControllerDelegate>
 {
@@ -26,6 +31,7 @@ static NSString *const cellId = @"defaultCellId";
 @implementation ChannelsController
 {
     UIImageView *profileImageView;
+    BOOL chatBegan;
 }
 
 - (void)viewDidLoad
@@ -67,14 +73,14 @@ static NSString *const cellId = @"defaultCellId";
     [profileImageView.heightAnchor constraintEqualToAnchor:titleView.heightAnchor constant:-4.0].active = true;
     [profileImageView.widthAnchor constraintEqualToAnchor:titleView.heightAnchor constant:-4.0].active = true;
     
-    profileImageView.layer.cornerRadius = 15;
+    profileImageView.layer.cornerRadius = 20;
     profileImageView.clipsToBounds = true;
     profileImageView.contentMode = UIViewContentModeScaleAspectFill;
     if(_currentUser && ![_currentUser.uid isEqualToString:@""])
     {
         if([_currentUser.profileURL isEqualToString:@""])
         {
-            profileImageView.image = [UIImage imageNamed:@"default-logo"];
+            profileImageView.image = [UIImage imageNamed:@"default-profile-logo"];
         }
         else
         {
@@ -130,15 +136,15 @@ static NSString *const cellId = @"defaultCellId";
     }
     
     [[DataProvider sharedInstance] uploadProfileImage:selectedImage forUser:_currentUser compressionQuality:0.1 complitionHandler:^(NSError * _Nonnull error, UIImage * _Nonnull uploadedImage)
-    {
-        if(!error && uploadedImage)
-        {
-            dispatch_async(dispatch_get_main_queue(), ^
-                           {
-                               self->profileImageView.image = uploadedImage;
-                           });
-        }
-    }];
+     {
+         if(!error && uploadedImage)
+         {
+             dispatch_async(dispatch_get_main_queue(), ^
+                            {
+                                self->profileImageView.image = uploadedImage;
+                            });
+         }
+     }];
     
     [picker dismissViewControllerAnimated:YES completion:nil];
 }
@@ -167,13 +173,20 @@ static NSString *const cellId = @"defaultCellId";
 {
     NSString *currentUserId = [[DataProvider sharedInstance] getCurrentUserId];
     [[DataProvider sharedInstance] observeChatsForUserId:currentUserId withComplitionHandler:^(NSArray * _Nonnull messages)
-    {
-        if (messages)
-        {
-            self->_messages = [messages copy];
-            [self.tableView reloadData];
-        }
-    }];
+     {
+         if (messages)
+         {
+             self->_messages = [messages sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull message1, id  _Nonnull message2)
+                                {
+                                    NSNumber *timestamp1 = [[message1 objectForKey:kLastContactMessage] valueForKey:kMessageTimestamp];
+                                    NSNumber *timestamp2 = [[message2 objectForKey:kLastContactMessage] valueForKey:kMessageTimestamp];
+                                    
+                                    return [timestamp1 doubleValue] < [timestamp2 doubleValue];
+                                }];
+             
+             [self.tableView reloadData];
+         }
+     }];
 }
 
 - (void)stopChatObserving
@@ -187,27 +200,32 @@ static NSString *const cellId = @"defaultCellId";
                                                                    message:@"Вы действительно хотите выйти из текущей учетной записи ?"
                                                             preferredStyle:UIAlertControllerStyleAlert];
     
-    UIAlertAction *yesAction = [UIAlertAction actionWithTitle:@"Да" style:UIAlertActionStyleDefault
-                                                          handler:^(UIAlertAction * action)
-    {
-        [[DataProvider sharedInstance] signOutHandler:^(NSError * _Nonnull error)
-         {
-             if(error)
-             {
-                 return;
-             }
-             
-             [self.navigationController popToRootViewControllerAnimated:YES];
-         }];
-    }];
+    UIAlertAction *yesAction = [UIAlertAction actionWithTitle:@"Да" style:UIAlertActionStyleDestructive
+                                                      handler:^(UIAlertAction * action)
+                                {
+                                    [[DataProvider sharedInstance] signOutHandler:^(NSError * _Nonnull error)
+                                     {
+                                         if(error)
+                                         {
+                                             return;
+                                         }
+                                         
+                                         [self.navigationController popToRootViewControllerAnimated:YES];
+                                     }];
+                                }];
     
     UIAlertAction *notAction = [UIAlertAction actionWithTitle:@"Нет" style:UIAlertActionStyleDefault
-                                                          handler:^(UIAlertAction * action) {}];
+                                                      handler:^(UIAlertAction * action) {}];
     
     [alert addAction:yesAction];
     [alert addAction:notAction];
     
     [self presentViewController:alert animated:YES completion:nil];
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return 70;
 }
 
 #pragma mark - Table view data source
@@ -224,12 +242,114 @@ static NSString *const cellId = @"defaultCellId";
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellId forIndexPath:indexPath];
-    Message *message = _messages[indexPath.row];
-    cell.detailTextLabel.text = message.messageText;
-    cell.textLabel.text = message.senderUserId;
-
+    UserMessageCell *cell = [tableView dequeueReusableCellWithIdentifier:cellId forIndexPath:indexPath];
+    
+    Message *message = [_messages[indexPath.row] objectForKey:kLastContactMessage];
+    NSString *contactUID = [_messages[indexPath.row] objectForKey:kContactId];
+    
+    [cell resetCellConfiguration];
+    [self configureCell:cell withUserUID:contactUID forMessage:message];
+    
+    switch (message.type)
+    {
+        case MessageTypeText:
+        {
+            [self configureCell:cell ForTextTypeMessage:message];
+            break;
+        }
+        case MessageTypeImage:
+        {
+            [self configureCell:cell ForImageTypeMessage:message];
+            break;
+        }
+        case MessageTypeVideo:
+        {
+            [self configureCell:cell ForVideoTypeMessage:message];
+            break;
+        }
+        default:
+            break;
+    }
+    
     return cell;
+}
+
+- (void)configureCell:(UserMessageCell *)cell withUserUID:(NSString *)userUID forMessage:(Message *)message
+{
+    [cell setMessageDateTime:message.timestamp];
+    
+    [[DataProvider sharedInstance] fetchUserWithId:userUID complitionHandler:^(User * _Nonnull user)
+     {
+         if(!user)
+         {
+             return;
+         }
+         
+         dispatch_async(dispatch_get_main_queue(), ^
+                        {
+                            [cell setTextNameLabel:user.name];
+                        });
+         
+         NSString *profileURL = user.profileURL;
+         if(profileURL && ![profileURL isEqualToString:@""])
+         {
+             [[DataProvider sharedInstance] loadProfileImageFromURL:profileURL complitionHandler:^(NSError * _Nonnull error, NSData * _Nonnull imageData)
+              {
+                  if(error)
+                  {
+                      return;
+                  }
+                  
+                  dispatch_async(dispatch_get_main_queue(), ^
+                                 {
+                                     [cell setAvatarImage:[UIImage imageWithData:imageData]];
+                                 });
+              }];
+         }
+     }];
+}
+
+- (void)configureCell:(UserMessageCell *)cell ForTextTypeMessage:(Message * _Nonnull)message
+{
+    [cell setTextMessageLabel:message.messageText];
+}
+
+- (void)configureCell:(UserMessageCell *)cell ForImageTypeMessage:(Message * _Nonnull)message
+{
+    [cell setTextMessageLabel:@"Фотография"];
+}
+
+- (void)configureCell:(UserMessageCell *)cell ForVideoTypeMessage:(Message * _Nonnull)message
+{
+    [cell setTextMessageLabel:@"Видео"];
+}
+
+- (NSIndexPath *)tableView:(UITableView *)tableView willSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if(chatBegan)
+    {
+        return nil;
+    }
+    
+    ChatController *chatController = [self.storyboard instantiateViewControllerWithIdentifier:chatControllerId];
+    NSString *contactUID = [_messages[indexPath.row] objectForKey:kContactId];
+    
+    if(chatController && contactUID)
+    {
+        self->chatBegan = true;
+        
+        [[DataProvider sharedInstance] fetchUserWithId:contactUID complitionHandler:^(User * _Nonnull user)
+         {
+             if(user)
+             {
+                 [chatController setReceiverUser:user];
+                 [self.navigationController pushViewController:chatController animated:YES];
+                 self->chatBegan = false;
+             }
+         }];
+    }
+    
+    return nil;
 }
 
 @end

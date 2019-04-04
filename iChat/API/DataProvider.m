@@ -171,7 +171,7 @@
 }
 
 
-- (void)fetchUserWithId:(NSString *)userId complitionHandler:(void(^)(User *))handler
+- (void)fetchUserWithId:(NSString *)userId complitionHandler:(void(^)(User *))handler;
 {
     if(userId == nil)
     {
@@ -744,7 +744,7 @@
 {
     if([message.receiverUserId isEqualToString:message.senderUserId])
     {
-        FIRDatabaseReference *messageSenderRef = [[[[[_databaseRef child:usersPath] child:message.senderUserId] child:chatsPath] child:message.receiverUserId] childByAutoId];
+        FIRDatabaseReference *messageSenderRef = [[[[_databaseRef child:chatsPath] child:message.senderUserId] child:message.receiverUserId] childByAutoId];
         
         // update Sender=Receiver chat
         [messageSenderRef updateChildValues:[message dictionaryRepresentation] withCompletionBlock:^(NSError * _Nullable error, FIRDatabaseReference * _Nonnull ref)
@@ -764,7 +764,7 @@
     {
         // update Sender chat
         dispatch_async(dispatch_get_main_queue(),^{
-            FIRDatabaseReference *messageSenderRef = [[[[[self->_databaseRef child:usersPath] child:message.senderUserId] child:chatsPath] child:message.receiverUserId] childByAutoId];
+            FIRDatabaseReference *messageSenderRef = [[[[self->_databaseRef child:chatsPath] child:message.senderUserId] child:message.receiverUserId] childByAutoId];
             [messageSenderRef updateChildValues:[message dictionaryRepresentation] withCompletionBlock:^(NSError * _Nullable error, FIRDatabaseReference * _Nonnull ref)
              {
                  if(error)
@@ -781,7 +781,7 @@
         
         // update Receiver chat
         dispatch_async(dispatch_get_main_queue(), ^{
-            FIRDatabaseReference *messageReceiverRef = [[[[[self->_databaseRef child:usersPath] child:message.receiverUserId] child:chatsPath] child:message.senderUserId] childByAutoId];
+            FIRDatabaseReference *messageReceiverRef = [[[[self->_databaseRef child:chatsPath] child:message.receiverUserId] child:message.senderUserId] childByAutoId];
             [messageReceiverRef updateChildValues:[message dictionaryRepresentation] withCompletionBlock:^(NSError * _Nullable error, FIRDatabaseReference * _Nonnull ref)
              {
                  if(error)
@@ -798,7 +798,7 @@
     }
 }
 
-// realize Firebase query, that observes only last users messages
+
 - (void)observeChatsForUserId:(NSString *)userId withComplitionHandler:(void(^)(NSArray *messages))handler
 {
     if(_databaseRef == nil)
@@ -808,14 +808,24 @@
         return;
     }
     
-    FIRDatabaseReference *userChatsRef = [[[_databaseRef child:usersPath] child:userId] child:chatsPath];
+    FIRDatabaseReference *userChatsRef = [[_databaseRef child:chatsPath] child:userId];
     [userChatsRef observeEventType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot)
      {
          NSMutableArray *messagesArray = [NSMutableArray array];
          for(FIRDataSnapshot *snap in [[snapshot children] allObjects])
          {
-             Message *message = [[Message alloc] initWithDictionaryRepresentation:snap.value];
-             [messagesArray addObject:message];
+             NSString *contactId = snap.key;
+             NSArray *sortedMessageArray = [[snap.value allObjects]
+                                            sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull message1, id  _Nonnull message2)
+             {
+                 return [[message1 valueForKey:kMessageTimestamp] doubleValue] > [[message2 valueForKey:kMessageTimestamp] doubleValue];
+             }];
+             
+             Message *lastContactMessage = [[Message alloc] initWithDictionaryRepresentation:[sortedMessageArray lastObject]];
+             NSDictionary *contactIDWithMessage = @{kContactId : contactId,
+                                                    kLastContactMessage : lastContactMessage};
+             
+             [messagesArray addObject:contactIDWithMessage];
          }
          
          handler(messagesArray);
@@ -830,7 +840,7 @@
         return;
     }
     
-    FIRDatabaseReference *userChatsRef = [[[_databaseRef child:usersPath] child:userId] child:chatsPath];
+    FIRDatabaseReference *userChatsRef = [[_databaseRef child:chatsPath] child:userId];
     [userChatsRef removeAllObservers];
 }
 
@@ -843,7 +853,7 @@
         return;
     }
     
-    FIRDatabaseReference *userChatRef = [[[[_databaseRef child:usersPath] child:userId] child:chatsPath] child:contactUserId];
+    FIRDatabaseReference *userChatRef = [[[_databaseRef child:chatsPath] child:userId] child:contactUserId];
     [userChatRef observeEventType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot)
      {
          NSMutableArray *messagesArray = [NSMutableArray array];
@@ -865,7 +875,7 @@
         return;
     }
     
-    FIRDatabaseReference *userChatWithContactRef = [[[[_databaseRef child:usersPath] child:userId] child:chatsPath] child:contactUserId];
+    FIRDatabaseReference *userChatWithContactRef = [[[_databaseRef child:chatsPath] child:userId] child:contactUserId];
     [userChatWithContactRef removeAllObservers];
 }
 

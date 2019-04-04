@@ -13,7 +13,7 @@
 
 static NSString *const kSegueLoginChannelsID = @"Login2Channels";
 
-@interface LoginController ()
+@interface LoginController () <UITextFieldDelegate>
 
 @property (weak, nonatomic) IBOutlet UIView *signInView;
 @property (weak, nonatomic) IBOutlet UIButton *regBtn;
@@ -65,8 +65,10 @@ static NSString *const kSegueLoginChannelsID = @"Login2Channels";
     UIColor *placeHolderColor = [UIColor colorWithRed:134.0/255.0 green:140.0/255.0 blue:140.0/255.0 alpha:1];
     
     self.emailField.attributedPlaceholder = [[NSAttributedString alloc] initWithString:self.emailField.placeholder attributes:@{NSForegroundColorAttributeName: placeHolderColor}];
+    self.emailField.delegate = self;
     
     self.passwordField.attributedPlaceholder = [[NSAttributedString alloc] initWithString:self.passwordField.placeholder attributes:@{NSForegroundColorAttributeName: placeHolderColor}];
+    self.passwordField.delegate = self;
     
     self.signInView.layer.cornerRadius = 5;
     self.signInView.layer.masksToBounds = true;
@@ -95,9 +97,15 @@ static NSString *const kSegueLoginChannelsID = @"Login2Channels";
     }
     else
     {
-        [self showAlertWithTitle:@"Внимание:" message:@"Вам необходимо заполнить все поля."];
+        [self showAlertWithTitle:@"Внимание:" message:@"Вам необходимо ввести Email и Пароль."];
         return;
     }
+}
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+    [textField resignFirstResponder];
+    return NO;
 }
 
 @end
