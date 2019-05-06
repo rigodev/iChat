@@ -3,7 +3,7 @@
 //  iChat
 //
 //  Created by rigo on 21/03/2019.
-//  Copyright © 2019 shuvalov. All rights reserved.
+//  Copyright © 2019 dev. All rights reserved.
 //
 
 #import "User.h"
